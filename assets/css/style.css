@@ -221,25 +221,19 @@ header {
 
 /*PERGUNTAS COMPORTAMENTO*/
 
-.perguntas .respostas .resposta .texto {
-  font-weight: bold;
-  margin: 10px 0 20px;
-  word-break: break-all;
-  width: 100%;
+.filtro-branco {
+    opacity: 40%;
 }
 
-.perguntas .respostas.answered.answer.incorrect .texto {
-  color: #FF4B4B;
+.true.selecionado,
+.true.filtro-branco {
+    color:#009C22;
 }
 
-.perguntas .respostas.answered .answer.correct .texto {
-  color: #009C22;
+.false.selecionado,
+.false.filtro-branco {
+    color:#FF4B4B;
 }
-
-.white {
-  opacity: 0.5;
-}
-
 
 /* OTHERS ========================================================================== */
 .hidden {

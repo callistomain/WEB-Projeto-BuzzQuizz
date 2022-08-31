@@ -30,14 +30,14 @@ function toQuizzPage(e) {
     page.classList.remove("hidden");
 
     axios.get(url + "/" + e.currentTarget.id)
+    .then(renderizarQuizz);
+    /*
     .then(p => {
         const data = p.data;
         page.id = data.id;
         data.questions.sort(() => Math.random() - 0.5);
         renderQuizzPage(data);
-    });
-
-
+    });*/
 }
 
 // DOM ======================================================================================
@@ -63,118 +63,70 @@ function createQuizzBox(obj) {
     return quizzBox;
 }
 
-function renderQuizzPage(obj) {
-    const fragment = document.createDocumentFragment();
-
-    // Page Header
-    const header = document.createElement("div");
-    header.className = "page-header";
-
-    const img = document.createElement("img");
-    img.src = obj.image;
-
-    const layer = document.createElement("div");
-    const title = document.createElement("span");
-    title.textContent = obj.title;
-
-    header.appendChild(img);
-    header.appendChild(layer);
-    header.appendChild(title);
-
-    // Questions
-    const questions = document.createElement("div");
-    questions.className = "questions";
-    
-    for (let i = 0; i < obj.questions.length; i++) {
-        // Question Box
-        const question = document.createElement("div");
-        question.className = "question-box";
-
-        // Title
-        const titleWrapper = document.createElement("div");
-        titleWrapper.className = "title-wrapper";
-
-        const title = document.createElement("h2");
-        title.textContent = obj.questions[i].title;
-
-        titleWrapper.appendChild(title);
-        question.appendChild(titleWrapper);
-        
-        // Answers
-        const answers = obj.questions[i].answers;
-        for (let j = 0; j < answers.length; j++) {
-            const answer = document.createElement("div");
-            answer.className = "answer"
-            
-            const img = document.createElement("img");
-            img.src = answers[j].image;
-            
-            const text = document.createElement("div");
-            text.textContent = answers[j].text;
-
-            answer.appendChild(img);
-            answer.appendChild(text);
-            question.appendChild(answer);
-        }
-
-        questions.appendChild(question);
-    }
-
-    fragment.appendChild(header);
-    fragment.appendChild(questions);
-    page.replaceChildren(fragment);
-}
-
 //Comportamento das respostas
 // ---------------------------------------------------------
+let acertos = 0;
+
 function renderizarQuizz(resposta) {
     const quizz = resposta.data;
-    quizzAtual = quizz;
-  
-    let answer = '';
-  
-    quizz.questions.forEach(function (pergunta, indice) {
-     answer += gerarCardPergunta(pergunta, indice);
+
+    let perguntas = '';
+    quizz.questions.forEach(function (pergunta) {
+        perguntas += gerarCardPergunta(pergunta);
     });
-    const app = document.querySelector('.quizz-page');
-    app.innerHTML = `
-      <div class="quizz-page">
-        <img src="${quizz.image}">
-        <div class="titulo">${quizz.title}</div>
-      </div>
-  
-      <div class="answer">
-        ${answer}
-      </div>
 
+    page.innerHTML = `
+        <div class="page-header">
+            <img src="${quizz.image}" alt="">
+            <div></div>
+            <span>${quizz.title}</span>
+        </div>
+
+        <ul class="questions">
+            ${perguntas}
+        </ul>
     `;
-  }
+}
 
-let isCorrectAnswer =  true;
-function gerarCardResposta(answer, index) {
-    let classe = 'incorrect';
-    if (answer.isCorrectAnswer) classe = 'correct';
-  
+function gerarCardPergunta(pergunta) {
+    let respostas = "";
+    pergunta.answers.forEach(function (resposta) {
+        console.log(resposta);
+        respostas += `
+            <div class="answer ${resposta.isCorrectAnswer}" onclick="escolherResposta(this)">
+                <img src="${resposta.image}" alt="">
+                <div>${resposta.text}</div>
+            </div>
+        `;
+    });
+
     return `
-      <div class="answer ${classe}" onclick="escolherResposta(this, ${index})">
-        <img src="${answer.image}">
-        <div class="texto">${answer.text}</div>
-      </div>
-    `;
-  }
+        <li class="question-box">
+            <div class="title-wrapper">
+                <h2>${pergunta.title}</h2>
+            </div>
+            ${respostas}
+        </li>
+    `
+}
 
-  function escolherResposta(elemento, indicePergunta) {
-    const answers = document.querySelectorAll('.answer');
+function escolherResposta(elemento) {
+    if (elemento.classList.contains("selecionado") || elemento.classList.contains("filtro-branco")) return;
 
-    for (let i = 0; i < answers.length; i++) {
-      const cardAnswer = answers[i];
-  
-      if (elemento !== cardAnswer) {
-        cardAnswer.classList.add('transparente');
-      }
+    const pai = elemento.parentNode;
+    const respostas = pai.querySelectorAll('.answer');
+
+    elemento.classList.add("selecionado");
+    for (let i = 0; i < respostas.length; i++) {
+        const resposta = respostas[i];
+        if (resposta !== elemento) {
+            resposta.classList.add("filtro-branco")
+        }
     }
 
-  }
+    if (elemento.classList.contains("true")) acertos++;
+    console.log(acertos);
+}
 
 
 
