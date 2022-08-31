@@ -3,7 +3,7 @@ const url = "https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes";
 const list = document.querySelector(".quizz-list");
 const page = document.querySelector(".quizz-page");
 const create = document.querySelector(".quizz-create");
-function renderMainPage();
+renderMainPage();
 
 // Functions ================================================================================
 function renderMainPage() {
