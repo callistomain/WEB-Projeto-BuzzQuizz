@@ -124,3 +124,123 @@ function renderQuizzPage(obj) {
     fragment.appendChild(questions);
     page.replaceChildren(fragment);
 }
+
+//Comportamento das respostas
+// ---------------------------------------------------------
+function renderizarQuizz(resposta) {
+    const quizz = resposta.data;
+    quizzAtual = quizz;
+  
+    let answer = '';
+  
+    quizz.questions.forEach(function (pergunta, indice) {
+     answer += gerarCardPergunta(pergunta, indice);
+    });
+    const app = document.querySelector('.quizz-page');
+    app.innerHTML = `
+      <div class="quizz-page">
+        <img src="${quizz.image}">
+        <div class="titulo">${quizz.title}</div>
+      </div>
+  
+      <div class="answer">
+        ${answer}
+      </div>
+
+    `;
+  }
+
+let isCorrectAnswer =  true;
+function gerarCardResposta(answer, index) {
+    let classe = 'incorrect';
+    if (answer.isCorrectAnswer) classe = 'correct';
+  
+    return `
+      <div class="answer ${classe}" onclick="escolherResposta(this, ${index})">
+        <img src="${answer.image}">
+        <div class="texto">${answer.text}</div>
+      </div>
+    `;
+  }
+
+  function escolherResposta(elemento, indicePergunta) {
+    const answers = document.querySelectorAll('.answer');
+
+    for (let i = 0; i < answers.length; i++) {
+      const cardAnswer = answers[i];
+  
+      if (elemento !== cardAnswer) {
+        cardAnswer.classList.add('transparente');
+      }
+    }
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function escolherResposta(elemento, correta, indicePergunta) {
+//     const containerRespostas = elemento.parentNode;
+  
+//     // impedindo que uma pergunta já respondida seja respondida de novo
+//     if (containerRespostas.classList.contains('respondido')) {
+//       return;
+//     }
+  
+//     contadorPerguntasRespondidas += 1;
+  
+//     if (correta) {
+//       contadorRespostasCorretas += 1;
+//     }
+  
+//     // quando o elemento pai tem a classe respondido as respostas recebem as cores
+//     containerRespostas.classList.add('respondido');
+  
+//     // colocando transparência no restante
+//     const respostas = containerRespostas.querySelectorAll('.resposta');
+  
+//     for (let i = 0; i < respostas.length; i++) {
+//       const resposta = respostas[i];
+  
+//       if (elemento !== resposta) {
+//         resposta.classList.add('transparente');
+//       }
+//     }
+  
+//     if (contadorPerguntasRespondidas !== quizzAtual.questions.length) {
+//       if (indicePergunta !== quizzAtual.questions.length - 1) {
+//         const proximaPergunta = document.querySelector(
+//           `.pergunta-${indicePergunta + 1}`
+//         );
+//         scrollarParaElemento(proximaPergunta);
+//       }
+//     } else {
+//       calcularEExibirNivel();
+//       const nivel = document.querySelector('.nivel');
+//       scrollarParaElemento(nivel);
+//     }
+//   }
+
+  

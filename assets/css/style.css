@@ -26,11 +26,11 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   font-size: 37px;
   font-weight: bold;
   color: white;
-  
+
   background-color: #EC362D;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
@@ -81,7 +81,8 @@ header {
   padding: 20px;
 }
 
-.all-quizzes h1 { /* FIX */
+.all-quizzes h1 {
+  /* FIX */
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 15px;
@@ -111,13 +112,13 @@ header {
 }
 
 .quizz-box .gradient {
-  position:absolute;
+  position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   border-radius: inherit;
-  background: linear-gradient(to top, rgba(0,0,0,1), rgba(0,0,0,0));
+  background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
 }
 
 .quizz-box span {
@@ -168,6 +169,7 @@ header {
   align-items: center;
   font-size: 40px;
   color: white;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.1));
 }
 
 
@@ -201,7 +203,7 @@ header {
 
   font-weight: bold;
   font-size: 23px;
-  
+
   background-color: skyblue;
   color: white;
 }
@@ -215,6 +217,27 @@ header {
 .answer div {
   font-size: 20px;
   font-weight: bold;
+}
+
+/*PERGUNTAS COMPORTAMENTO*/
+
+.perguntas .respostas .resposta .texto {
+  font-weight: bold;
+  margin: 10px 0 20px;
+  word-break: break-all;
+  width: 100%;
+}
+
+.perguntas .respostas.answered.answer.incorrect .texto {
+  color: #FF4B4B;
+}
+
+.perguntas .respostas.answered .answer.correct .texto {
+  color: #009C22;
+}
+
+.white {
+  opacity: 0.5;
 }
 
 
