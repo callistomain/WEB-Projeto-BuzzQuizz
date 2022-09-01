@@ -10,8 +10,8 @@ function renderMainPage() {
 	// Render all-quizzes
 	const allQuizzesList = document.querySelector(".all-quizzes ul");
 	axios.get(url)
-		.then(p => {
-			const data = p.data;
+		.then(promise => {
+			const data = promise.data;
 			const fragment = document.createDocumentFragment();
 			data.forEach(e => fragment.appendChild(createQuizzBox(e)));
 			allQuizzesList.replaceChildren(fragment);
@@ -22,15 +22,24 @@ function renderMainPage() {
 function toQuizzCreate() {
 	list.classList.add("hidden");
 	create.classList.remove("hidden");
+    window.scrollTo(0, 0);
 }
 
 // Page 1 > Page 2
 function toQuizzPage(e) {
 	list.classList.add("hidden");
 	page.classList.remove("hidden");
+    window.scrollTo(0, 0);
 
 	axios.get(url + "/" + e.currentTarget.id)
-		.then(renderizarQuizz);
+		.then(promise => renderizarQuizz(promise.data));
+}
+
+function pageToHome() {
+    page.classList.add("hidden");
+    list.classList.remove("hidden");
+    window.scrollTo(0, 0);
+    renderMainPage();
 }
 
 // DOM ======================================================================================
@@ -57,13 +66,12 @@ function createQuizzBox(obj) {
 }
 
 // Comportamento das respostas ==============================================================
-const delay = 2000;
-let acertos = 0;
-let selecionados = 0;
-let quizzAtual;
+const delay = 100; // 2000
+let acertos, selecionados, quizzAtual;
 
-function renderizarQuizz(resposta) {
-	const quizz = resposta.data;
+function renderizarQuizz(quizz) {
+    acertos = 0;
+    selecionados = 0;
 	quizzAtual = quizz;
 
 	let perguntas = '';
@@ -157,6 +165,10 @@ function resolveResult() {
                     <div class="text">${level.text}</div>
                 </div>
             </div>
+            <div class="quizz-options">
+                <button class="reset-quizz" onclick="resetQuizz()">Reiniciar Quizz</button>
+                <div class="quit-quizz" onclick="pageToHome()">Voltar para home<div>
+            </div>
             `;
 
 			const result = page.querySelector(".result-wrapper");
@@ -165,6 +177,11 @@ function resolveResult() {
 			window.scrollTo({ top: y, behavior: 'smooth', block: 'start' });
 		}, delay);
 	}
+}
+
+function resetQuizz() {
+    renderizarQuizz(quizzAtual);
+    window.scrollTo(0, 0);
 }
 
 // Create Quizz ==================================================================

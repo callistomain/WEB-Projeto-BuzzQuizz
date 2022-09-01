@@ -238,7 +238,7 @@ h1 {
 .result-wrapper {
     display: flex;
     justify-content: center;
-    margin-bottom: 45px;
+    margin-bottom: 60px;
 }
 
 .result-wrapper .title-wrapper {
@@ -260,6 +260,31 @@ h1 {
     color: #484848;
     width: 330px;
     word-break: break-word;
+}
+
+.quizz-options {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+    margin-bottom: 80px;
+}
+
+.reset-quizz {
+    font-size: 21px;
+    padding: 14px 60px;
+    color: white;
+    background-color: #EC362D;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.quit-quizz {
+    font-size: 21px;
+    color: #818181;
+    cursor: pointer;
 }
 
 /* QUIZZ-CREATE ====================================================================== */
