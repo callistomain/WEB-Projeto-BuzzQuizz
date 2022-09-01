@@ -221,9 +221,11 @@ function go_to_create_question() {
 
 function open_question(element) {
 	const internal = element.parentNode.querySelector('.internal');
-	const ion = element.querySelector('ion-icon');
+	const ion = element.querySelectorAll('ion-icon');
 	internal.classList.toggle('hidden');
-	ion.classList.toggle('hidden');
+	for(let i=0;i<ion.length;i++){
+        ion[i].classList.toggle('hidden');
+    };
 	// validarQuizz();
 }
 
