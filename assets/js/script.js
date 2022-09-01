@@ -58,9 +58,12 @@ function createQuizzBox(obj) {
 
 // Comportamento das respostas ==============================================================
 let acertos = 0;
+let selecionados = 0;
+let quizzAtual;
 
 function renderizarQuizz(resposta) {
     const quizz = resposta.data;
+    quizzAtual = quizz;
 
     let perguntas = '';
     quizz.questions.forEach(function (pergunta) {
@@ -101,6 +104,7 @@ function gerarCardPergunta(pergunta) {
     `
 }
 
+const delay = 2000;
 function escolherResposta(elemento) {
     if (elemento.classList.contains("selecionado") || elemento.classList.contains("filtro-branco")) return;
 
@@ -121,10 +125,45 @@ function escolherResposta(elemento) {
             const yOffset = -80; 
             const y = sibling.getBoundingClientRect().top + window.pageYOffset + yOffset;
             window.scrollTo({top: y, behavior: 'smooth', block: 'start'});
-        }, 2000);
+        }, delay);
     }
 
+    selecionados++;
     if (elemento.classList.contains("true")) acertos++;
+    resolveResult();
+}
+
+function resolveResult() {
+    const len = quizzAtual.questions.length;
+    if (selecionados === len) {
+        const levels = quizzAtual.levels;
+        const percentage = Math.floor((acertos / len) * 100);
+        let i;
+        
+        for (i = levels.length-1; i >= 0; i--) {
+            if (percentage >= levels[i].minValue) break;
+        }
+
+        const level = levels[i];
+        setTimeout(() => {
+            page.innerHTML += `
+            <div class="result-wrapper">
+                <div class="result">
+                    <div class="title-wrapper" style="background-color:#EC362D">
+                        <h2>${percentage}% de acerto: ${level.title}</h2>
+                    </div>
+                    <img src="${level.image}" alt="">
+                    <div class="text">${level.text}</div>
+                </div>
+            </div>
+            `;
+
+            const result = page.querySelector(".result-wrapper");
+            const yOffset = -80; 
+            const y = result.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({top: y, behavior: 'smooth', block: 'start'});
+        }, delay);
+    }
 }
 
 
