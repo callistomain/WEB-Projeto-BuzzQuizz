@@ -7,53 +7,53 @@ renderMainPage();
 
 // Functions ================================================================================
 function renderMainPage() {
-    // Render all-quizzes
-    const allQuizzesList = document.querySelector(".all-quizzes ul");
-    axios.get(url)
-    .then(p => {
-        const data = p.data;
-        const fragment = document.createDocumentFragment();
-        data.forEach(e => fragment.appendChild(createQuizzBox(e)));
-        allQuizzesList.replaceChildren(fragment);
-    });
+	// Render all-quizzes
+	const allQuizzesList = document.querySelector(".all-quizzes ul");
+	axios.get(url)
+		.then(p => {
+			const data = p.data;
+			const fragment = document.createDocumentFragment();
+			data.forEach(e => fragment.appendChild(createQuizzBox(e)));
+			allQuizzesList.replaceChildren(fragment);
+		});
 }
 
 // Page 1 > Page 3
 function toQuizzCreate() {
-    list.classList.add("hidden");
-    create.classList.remove("hidden");
+	list.classList.add("hidden");
+	create.classList.remove("hidden");
 }
 
 // Page 1 > Page 2
 function toQuizzPage(e) {
-    list.classList.add("hidden");
-    page.classList.remove("hidden");
+	list.classList.add("hidden");
+	page.classList.remove("hidden");
 
-    axios.get(url + "/" + e.currentTarget.id)
-    .then(renderizarQuizz);
+	axios.get(url + "/" + e.currentTarget.id)
+		.then(renderizarQuizz);
 }
 
 // DOM ======================================================================================
 function createQuizzBox(obj) {
-    const quizzBox = document.createElement("li");
-    quizzBox.className = "quizz-box";
-    quizzBox.id = obj.id;
+	const quizzBox = document.createElement("li");
+	quizzBox.className = "quizz-box";
+	quizzBox.id = obj.id;
 
-    const img = document.createElement("img");
-    img.src = obj.image;
+	const img = document.createElement("img");
+	img.src = obj.image;
 
-    const grad = document.createElement("div");
-    grad.className = "gradient";
+	const grad = document.createElement("div");
+	grad.className = "gradient";
 
-    const title = document.createElement("span");
-    title.textContent = obj.title;
+	const title = document.createElement("span");
+	title.textContent = obj.title;
 
-    quizzBox.appendChild(img);
-    quizzBox.appendChild(grad);
-    quizzBox.appendChild(title);
+	quizzBox.appendChild(img);
+	quizzBox.appendChild(grad);
+	quizzBox.appendChild(title);
 
-    quizzBox.addEventListener("click", toQuizzPage);
-    return quizzBox;
+	quizzBox.addEventListener("click", toQuizzPage);
+	return quizzBox;
 }
 
 // Comportamento das respostas ==============================================================
@@ -63,16 +63,16 @@ let selecionados = 0;
 let quizzAtual;
 
 function renderizarQuizz(resposta) {
-    const quizz = resposta.data;
-    quizzAtual = quizz;
+	const quizz = resposta.data;
+	quizzAtual = quizz;
 
-    let perguntas = '';
-    quizz.questions.sort(() => Math.random() - 0.5);
-    quizz.questions.forEach(function (pergunta) {
-        perguntas += gerarCardPergunta(pergunta);
-    });
+	let perguntas = '';
+	quizz.questions.sort(() => Math.random() - 0.5);
+	quizz.questions.forEach(function (pergunta) {
+		perguntas += gerarCardPergunta(pergunta);
+	});
 
-    page.innerHTML = `
+	page.innerHTML = `
         <div class="page-header">
             <img src="${quizz.image}" alt="">
             <div></div>
@@ -86,17 +86,17 @@ function renderizarQuizz(resposta) {
 }
 
 function gerarCardPergunta(pergunta) {
-    let respostas = "";
-    pergunta.answers.forEach(function (resposta) {
-        respostas += `
+	let respostas = "";
+	pergunta.answers.forEach(function (resposta) {
+		respostas += `
             <div class="answer ${resposta.isCorrectAnswer}" onclick="escolherResposta(this)">
                 <img src="${resposta.image}" alt="">
                 <div>${resposta.text}</div>
             </div>
         `;
-    });
+	});
 
-    return `
+	return `
         <li class="question-box">
             <div class="title-wrapper" style="background-color:${pergunta.color}">
                 <h2>${pergunta.title}</h2>
@@ -107,47 +107,47 @@ function gerarCardPergunta(pergunta) {
 }
 
 function escolherResposta(elemento) {
-    if (elemento.classList.contains("selecionado") || elemento.classList.contains("filtro-branco")) return;
+	if (elemento.classList.contains("selecionado") || elemento.classList.contains("filtro-branco")) return;
 
-    const pai = elemento.parentNode;
-    const respostas = pai.querySelectorAll('.answer');
+	const pai = elemento.parentNode;
+	const respostas = pai.querySelectorAll('.answer');
 
-    elemento.classList.add("selecionado");
-    for (let i = 0; i < respostas.length; i++) {
-        const resposta = respostas[i];
-        if (resposta !== elemento) {
-            resposta.classList.add("filtro-branco")
-        }
-    }
+	elemento.classList.add("selecionado");
+	for (let i = 0; i < respostas.length; i++) {
+		const resposta = respostas[i];
+		if (resposta !== elemento) {
+			resposta.classList.add("filtro-branco")
+		}
+	}
 
-    const sibling = pai.nextSibling.nextSibling;
-    if (sibling) {
-        setTimeout(() => {
-            const yOffset = -80; 
-            const y = sibling.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({top: y, behavior: 'smooth', block: 'start'});
-        }, delay);
-    }
+	const sibling = pai.nextSibling.nextSibling;
+	if (sibling) {
+		setTimeout(() => {
+			const yOffset = -80;
+			const y = sibling.getBoundingClientRect().top + window.pageYOffset + yOffset;
+			window.scrollTo({ top: y, behavior: 'smooth', block: 'start' });
+		}, delay);
+	}
 
-    selecionados++;
-    if (elemento.classList.contains("true")) acertos++;
-    resolveResult();
+	selecionados++;
+	if (elemento.classList.contains("true")) acertos++;
+	resolveResult();
 }
 
 function resolveResult() {
-    const len = quizzAtual.questions.length;
-    if (selecionados === len) {
-        const levels = quizzAtual.levels;
-        const percentage = Math.floor((acertos / len) * 100);
-        let i;
-        
-        for (i = levels.length-1; i >= 0; i--) {
-            if (percentage >= levels[i].minValue) break;
-        }
+	const len = quizzAtual.questions.length;
+	if (selecionados === len) {
+		const levels = quizzAtual.levels;
+		const percentage = Math.floor((acertos / len) * 100);
+		let i;
 
-        const level = levels[i];
-        setTimeout(() => {
-            page.innerHTML += `
+		for (i = levels.length - 1; i >= 0; i--) {
+			if (percentage >= levels[i].minValue) break;
+		}
+
+		const level = levels[i];
+		setTimeout(() => {
+			page.innerHTML += `
             <div class="result-wrapper">
                 <div class="result">
                     <div class="title-wrapper" style="background-color:#EC362D">
@@ -159,46 +159,91 @@ function resolveResult() {
             </div>
             `;
 
-            const result = page.querySelector(".result-wrapper");
-            const yOffset = -80; 
-            const y = result.getBoundingClientRect().top + window.pageYOffset + yOffset;
-            window.scrollTo({top: y, behavior: 'smooth', block: 'start'});
-        }, delay);
-    }
+			const result = page.querySelector(".result-wrapper");
+			const yOffset = -80;
+			const y = result.getBoundingClientRect().top + window.pageYOffset + yOffset;
+			window.scrollTo({ top: y, behavior: 'smooth', block: 'start' });
+		}, delay);
+	}
 }
 
 // ============================= Create Quizz ============================
-let array_create_quizz=[];
-function go_to_create_question(){
-    const list_inputs= create.querySelectorAll('input');
-    let array=[];
-    for (let i = 0;i<list_inputs.length;i++){
-        array.push(list_inputs[i].value);
-    }
-    create.innerHTML=`<p class="title-creation">Crie suas perguntas</p>`;
-    for (let i=0;i<array[2];i++){
-        create.innerHTML=create.innerHTML+`<div class="box-creation">
+let array_create_quizz = [];
+function go_to_create_question() {
+	
+	const list_inputs = create.querySelectorAll('input');
+	let array = [];
+	for (let i = 0; i < list_inputs.length; i++) {
+		array.push(list_inputs[i].value);
+	}
+	create.innerHTML = `<p class="title-creation">Crie suas perguntas</p>`;
+	for (let i = 0; i < array[2]; i++) {
+		create.innerHTML = create.innerHTML + `<div class="box-creation">
         <div class='question-creation'>
-        <div onclick='open_question(this)' class='external id${i+1}'>
-            <p>Pergunta ${i+1}</p>
+        <div onclick='open_question(this)' class='external id${i + 1}'>
+            <p>Pergunta ${i + 1}</p>
             <ion-icon class="" name="create-outline"></ion-icon>
         </div>
-        <div class='internal hidden id${i+1}'>
-            <input type="text" placeholder="Título do seu quizz">
-            <input type="url" placeholder="URL da imagem do seu quizz">
-            <input type="number" placeholder="Quantidade de perguntas do quizz">
-            <input type="number" placeholder="Quantidade de níveis do quizz">
+        <div class='internal hidden id${i + 1}'>
+            <input type="text" id="text" placeholder="Título do seu quizz">
+            <input type="url" id="url" placeholder="URL da imagem do seu quizz">
+            <input type="number" id="number1" placeholder="Quantidade de perguntas do quizz">
+            <input type="number" id="number2" placeholder="Quantidade de níveis do quizz">
         </div>
         </div>
         </div>`
-    }
-        
-    create.innerHTML=create.innerHTML+`<button onclick="go_to_create_question()">Prosseguir pra criar níveis</button>`
+	}
+	create.innerHTML = create.innerHTML + `<button onclick="go_to_create_question(), onclick=validarQuizz()">Prosseguir pra criar níveis</button>`
+
 }
 
-function open_question(element){
-    const internal = element.parentNode.querySelector('.internal');
-    const ion = element.querySelector('ion-icon');
-    internal.classList.toggle('hidden');
-    ion.classList.toggle('hidden');
+function open_question(element) {
+	const internal = element.parentNode.querySelector('.internal');
+	const ion = element.querySelector('ion-icon');
+	internal.classList.toggle('hidden');
+	ion.classList.toggle('hidden');
+	validarQuizz();
+}
+
+//============================validação do quiz===============================================
+function validarQuizz() {
+	array_create_quizz = {
+		titulo:'',
+		imagem:'',
+		quantidadeDePerguntas: 0,
+		quantidadeDeNiveis: 0,
+		perguntas: [],
+		niveis:[],
+	}
+	
+	const titulo = document.querySelector("#text");
+	const imagem = document.querySelector("#url");
+	const quantidadeDePerguntas = document.querySelector("#number1");
+	const quantidadeDeNiveis = document.querySelector("#number2");
+
+	array_create_quizz.titulo = titulo.value;
+	array_create_quizz.imagem = imagem.value;
+	array_create_quizz.quantidadeDePerguntas = quantidadeDePerguntas.value;
+	array_create_quizz.quantidadeDeNiveis = quantidadeDeNiveis.value;
+
+	if (array_create_quizz.titulo.length < 20 || array_create_quizz.titulo.length > 65 || array_create_quizz.titulo.length === 0 ) {
+		alert('O título deve ter no mínimo 20 caracteres e no máximo 65');
+		return false;
+	} else if (array_create_quizz.quantidadeDePerguntas < 3) {
+		alert('Quantidade mínima de perguntas 3')
+		return false;
+	} else if (array_create_quizz.quantidadeDeNiveis < 2) {
+		alert('Quantidade mínima de níveis 2')
+		return false;
+	}
+	return true;
+}
+
+function validar_URL(string) {
+	let url = new URL(string);
+	if (url === array_create_quizz.imagem) {
+		return string;
+	} else {
+		return alert('URL inválida!')
+	}
 }
