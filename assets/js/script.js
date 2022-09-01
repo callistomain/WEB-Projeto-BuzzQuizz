@@ -203,4 +203,40 @@ function escolherResposta(elemento) {
 //     }
 //   }
 
-  
+
+
+
+//=============================Create Quizz============================
+let array_create_quizz=[];
+function go_to_create_question(){
+    const list_inputs= create.querySelectorAll('input');
+    let array=[];
+    for (let i = 0;i<list_inputs.length;i++){
+        array.push(list_inputs[i].value);
+    }
+    create.innerHTML=`<p class="title-creation">Crie suas perguntas</p>`;
+    for (let i=0;i<array[2];i++){
+        create.innerHTML=create.innerHTML+`<div class="box-creation">
+        <div class='question-creation'>
+        <div onclick='open_question(this)' class='external id${i+1}'>
+            <p>Pergunta ${i+1}</p>
+            <ion-icon class="" name="create-outline"></ion-icon>
+        </div>
+        <div class='internal hidden id${i+1}'>
+            <input type="text" placeholder="Título do seu quizz">
+            <input type="url" placeholder="URL da imagem do seu quizz">
+            <input type="number" placeholder="Quantidade de perguntas do quizz">
+            <input type="number" placeholder="Quantidade de níveis do quizz">
+        </div>
+        </div>
+        </div>`
+    }
+        
+    create.innerHTML=create.innerHTML+`<button onclick="go_to_create_question()">Prosseguir pra criar níveis</button>`
+}
+function open_question(element){
+    const internal = element.parentNode.querySelector('.internal');
+    const ion = element.querySelector('ion-icon');
+    internal.classList.toggle('hidden');
+    ion.classList.toggle('hidden');
+}
