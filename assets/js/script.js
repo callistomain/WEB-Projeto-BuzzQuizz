@@ -31,13 +31,6 @@ function toQuizzPage(e) {
 
     axios.get(url + "/" + e.currentTarget.id)
     .then(renderizarQuizz);
-    /*
-    .then(p => {
-        const data = p.data;
-        page.id = data.id;
-        data.questions.sort(() => Math.random() - 0.5);
-        renderQuizzPage(data);
-    });*/
 }
 
 // DOM ======================================================================================
@@ -63,8 +56,7 @@ function createQuizzBox(obj) {
     return quizzBox;
 }
 
-//Comportamento das respostas
-// ---------------------------------------------------------
+// Comportamento das respostas ==============================================================
 let acertos = 0;
 
 function renderizarQuizz(resposta) {
@@ -101,7 +93,7 @@ function gerarCardPergunta(pergunta) {
 
     return `
         <li class="question-box">
-            <div class="title-wrapper">
+            <div class="title-wrapper" style="background-color:${pergunta.color}">
                 <h2>${pergunta.title}</h2>
             </div>
             ${respostas}
@@ -133,7 +125,6 @@ function escolherResposta(elemento) {
     }
 
     if (elemento.classList.contains("true")) acertos++;
-    console.log(acertos);
 }
 
 
