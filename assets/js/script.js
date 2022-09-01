@@ -167,34 +167,38 @@ function resolveResult() {
 	}
 }
 
-// ============================= Create Quizz ============================
+// Create Quizz ==================================================================
 let array_create_quizz = [];
+
 function go_to_create_question() {
-	
 	const list_inputs = create.querySelectorAll('input');
 	let array = [];
+
 	for (let i = 0; i < list_inputs.length; i++) {
 		array.push(list_inputs[i].value);
 	}
+
 	create.innerHTML = `<p class="title-creation">Crie suas perguntas</p>`;
 	for (let i = 0; i < array[2]; i++) {
-		create.innerHTML = create.innerHTML + `<div class="box-creation">
-        <div class='question-creation'>
-        <div onclick='open_question(this)' class='external id${i + 1}'>
-            <p>Pergunta ${i + 1}</p>
-            <ion-icon class="" name="create-outline"></ion-icon>
+		create.innerHTML += `
+        <div class="box-creation">
+            <div class='question-creation'>
+                <div onclick='open_question(this)' class='external id${i + 1}'>
+                    <p>Pergunta ${i + 1}</p>
+                    <ion-icon class="" name="create-outline"></ion-icon>
+                </div>
+                <div class='internal hidden id${i + 1}'>
+                    <input type="text" id="text" placeholder="Título do seu quizz">
+                    <input type="url" id="url" placeholder="URL da imagem do seu quizz">
+                    <input type="number" id="number1" placeholder="Quantidade de perguntas do quizz">
+                    <input type="number" id="number2" placeholder="Quantidade de níveis do quizz">
+                </div>
+            </div>
         </div>
-        <div class='internal hidden id${i + 1}'>
-            <input type="text" id="text" placeholder="Título do seu quizz">
-            <input type="url" id="url" placeholder="URL da imagem do seu quizz">
-            <input type="number" id="number1" placeholder="Quantidade de perguntas do quizz">
-            <input type="number" id="number2" placeholder="Quantidade de níveis do quizz">
-        </div>
-        </div>
-        </div>`
+        `;
 	}
-	create.innerHTML = create.innerHTML + `<button onclick="go_to_create_question(), onclick=validarQuizz()">Prosseguir pra criar níveis</button>`
 
+	create.innerHTML = create.innerHTML + `<button onclick"">Prosseguir pra criar níveis</button>`
 }
 
 function open_question(element) {
@@ -202,11 +206,11 @@ function open_question(element) {
 	const ion = element.querySelector('ion-icon');
 	internal.classList.toggle('hidden');
 	ion.classList.toggle('hidden');
-	validarQuizz();
+	// validarQuizz();
 }
 
-//============================validação do quiz===============================================
-function validarQuizz() {
+// Validação do Quizz ===========================================================================
+function validarInfosQuizz() {
 	array_create_quizz = {
 		titulo:'',
 		imagem:'',
@@ -226,24 +230,19 @@ function validarQuizz() {
 	array_create_quizz.quantidadeDePerguntas = quantidadeDePerguntas.value;
 	array_create_quizz.quantidadeDeNiveis = quantidadeDeNiveis.value;
 
-	if (array_create_quizz.titulo.length < 20 || array_create_quizz.titulo.length > 65 || array_create_quizz.titulo.length === 0 ) {
+	if (array_create_quizz.titulo.length < 20 || array_create_quizz.titulo.length > 65) {
 		alert('O título deve ter no mínimo 20 caracteres e no máximo 65');
-		return false;
-	} else if (array_create_quizz.quantidadeDePerguntas < 3) {
-		alert('Quantidade mínima de perguntas 3')
-		return false;
+		return;
+	} else if (!imagem.validity.valid) {
+		alert('O valor informado não é uma URL válida');
+		return;
+    } else if (array_create_quizz.quantidadeDePerguntas < 3) {
+		alert('Quantidade mínima de perguntas 3');
+		return;
 	} else if (array_create_quizz.quantidadeDeNiveis < 2) {
-		alert('Quantidade mínima de níveis 2')
-		return false;
+		alert('Quantidade mínima de níveis 2');
+		return;
 	}
-	return true;
-}
 
-function validar_URL(string) {
-	let url = new URL(string);
-	if (url === array_create_quizz.imagem) {
-		return url;
-	} else {
-		return alert('URL inválida!')
-	}
+    go_to_create_question();
 }
