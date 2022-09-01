@@ -200,9 +200,10 @@ function go_to_create_question() {
 		create.innerHTML += `
         <div class="box-creation">
             <div class='question-creation'>
-                <div onclick='open_question(this)' class='external id${i + 1}'>
+                <div onclick='' class='external id${i + 1}'>
                     <p>Pergunta ${i + 1}</p>
-                    <ion-icon class="" name="create-outline"></ion-icon>
+                    <ion-icon onclick='open_question(this.parentNode)' class="" name="create-outline"></ion-icon>
+            		<ion-icon onclick='open_question(this.parentNode)' class="hidden" name="remove-outline"></ion-icon>
                 </div>
                 <div class='internal hidden id${i + 1}'>
                     <input type="text" id="text" placeholder="Título do seu quizz">

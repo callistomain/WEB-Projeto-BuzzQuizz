@@ -9,6 +9,10 @@ body {
   font-family: 'Roboto', sans-serif;
   background-color: #FAFAFA;
 }
+body::-webkit-scrollbar{
+  display: none;
+}
+
 
 ul {
   list-style: none;
