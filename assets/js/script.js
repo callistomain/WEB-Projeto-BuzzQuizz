@@ -91,7 +91,6 @@ function renderizarQuizz(resposta) {
 function gerarCardPergunta(pergunta) {
     let respostas = "";
     pergunta.answers.forEach(function (resposta) {
-        console.log(resposta);
         respostas += `
             <div class="answer ${resposta.isCorrectAnswer}" onclick="escolherResposta(this)">
                 <img src="${resposta.image}" alt="">
@@ -122,6 +121,15 @@ function escolherResposta(elemento) {
         if (resposta !== elemento) {
             resposta.classList.add("filtro-branco")
         }
+    }
+
+    const sibling = pai.nextSibling.nextSibling;
+    if (sibling) {
+        setTimeout(() => {
+            const yOffset = -80; 
+            const y = sibling.getBoundingClientRect().top + window.pageYOffset + yOffset;
+            window.scrollTo({top: y, behavior: 'smooth', block: 'start'});
+        }, 2000);
     }
 
     if (elemento.classList.contains("true")) acertos++;
