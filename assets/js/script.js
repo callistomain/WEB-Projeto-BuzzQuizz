@@ -242,7 +242,7 @@ function validarQuizz() {
 function validar_URL(string) {
 	let url = new URL(string);
 	if (url === array_create_quizz.imagem) {
-		return string;
+		return url;
 	} else {
 		return alert('URL inválida!')
 	}
