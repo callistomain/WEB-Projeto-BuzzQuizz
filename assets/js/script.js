@@ -57,6 +57,7 @@ function createQuizzBox(obj) {
 }
 
 // Comportamento das respostas ==============================================================
+const delay = 2000;
 let acertos = 0;
 let selecionados = 0;
 let quizzAtual;
@@ -66,6 +67,7 @@ function renderizarQuizz(resposta) {
     quizzAtual = quizz;
 
     let perguntas = '';
+    quizz.questions.sort(() => Math.random() - 0.5);
     quizz.questions.forEach(function (pergunta) {
         perguntas += gerarCardPergunta(pergunta);
     });
@@ -104,7 +106,6 @@ function gerarCardPergunta(pergunta) {
     `
 }
 
-const delay = 2000;
 function escolherResposta(elemento) {
     if (elemento.classList.contains("selecionado") || elemento.classList.contains("filtro-branco")) return;
 
@@ -166,77 +167,7 @@ function resolveResult() {
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// function escolherResposta(elemento, correta, indicePergunta) {
-//     const containerRespostas = elemento.parentNode;
-  
-//     // impedindo que uma pergunta já respondida seja respondida de novo
-//     if (containerRespostas.classList.contains('respondido')) {
-//       return;
-//     }
-  
-//     contadorPerguntasRespondidas += 1;
-  
-//     if (correta) {
-//       contadorRespostasCorretas += 1;
-//     }
-  
-//     // quando o elemento pai tem a classe respondido as respostas recebem as cores
-//     containerRespostas.classList.add('respondido');
-  
-//     // colocando transparência no restante
-//     const respostas = containerRespostas.querySelectorAll('.resposta');
-  
-//     for (let i = 0; i < respostas.length; i++) {
-//       const resposta = respostas[i];
-  
-//       if (elemento !== resposta) {
-//         resposta.classList.add('transparente');
-//       }
-//     }
-  
-//     if (contadorPerguntasRespondidas !== quizzAtual.questions.length) {
-//       if (indicePergunta !== quizzAtual.questions.length - 1) {
-//         const proximaPergunta = document.querySelector(
-//           `.pergunta-${indicePergunta + 1}`
-//         );
-//         scrollarParaElemento(proximaPergunta);
-//       }
-//     } else {
-//       calcularEExibirNivel();
-//       const nivel = document.querySelector('.nivel');
-//       scrollarParaElemento(nivel);
-//     }
-//   }
-
-
-
-
-//=============================Create Quizz============================
+// ============================= Create Quizz ============================
 let array_create_quizz=[];
 function go_to_create_question(){
     const list_inputs= create.querySelectorAll('input');
@@ -264,6 +195,7 @@ function go_to_create_question(){
         
     create.innerHTML=create.innerHTML+`<button onclick="go_to_create_question()">Prosseguir pra criar níveis</button>`
 }
+
 function open_question(element){
     const internal = element.parentNode.querySelector('.internal');
     const ion = element.querySelector('ion-icon');
