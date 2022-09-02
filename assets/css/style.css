@@ -213,7 +213,12 @@ h1 {
   margin-bottom: 10px;
 }
 
+.answer {
+    word-break: break-all;
+}
+
 .answer div {
+    width: 330px;
   font-size: 20px;
   font-weight: bold;
 }
@@ -247,6 +252,7 @@ h1 {
 
 .result {
     justify-content: initial;
+    gap: 20px;
 }
 
 .result img {
@@ -258,7 +264,7 @@ h1 {
     font-size: 19px;
     font-weight: bold;
     color: #484848;
-    width: 330px;
+    width: 335px;
     word-break: break-word;
 }
 
@@ -287,6 +293,22 @@ h1 {
     cursor: pointer;
 }
 
+/* LOADING =========================================================================== */
+.loading {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #fafafa;
+    font-size: 25px;
+    color: #EC362D;
+}
+
 /* QUIZZ-CREATE ====================================================================== */
 .quizz-create{
   margin-top: 70px;
@@ -296,11 +318,13 @@ h1 {
   align-items: center;
   flex-direction: column;
 }
+
 .title-creation{
   margin-top: 71px;
   font-weight: 700;
   font-size: 23px;
 }
+
 .box-creation{
   margin-top: 28px;
   background-color: white;
@@ -311,6 +335,7 @@ h1 {
  padding: 16px;
  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
 }
+
 .quizz-create input{
   margin-top: 5px;
   margin-bottom: 5px;
@@ -323,12 +348,14 @@ h1 {
   font-weight: 400;
   font-size: 19px;
 }
+
 .quizz-create input::placeholder{
   font-style: italic;
   font-weight: 400;
   font-size: 19px;
   color: #BABABA;
 }
+
 .quizz-create button{
   width: 370px;
   height: 54px;
@@ -341,6 +368,7 @@ h1 {
   font-size: 21px;
   margin-bottom: 85px;
 }
+
 .internal{
   margin-top: 10px;
   width: auto;
@@ -348,21 +376,19 @@ h1 {
   display: flex;
   flex-direction: column;
 }
+
 .external{
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
+
 .question-creation{
   font-weight: 700;
   font-size: 20px;
   display: flex;
   flex-direction: column;
 }
-
-
-
-
 
 @media (max-width: 600px) {
   .box-creation{
@@ -441,7 +467,10 @@ h1 {
 
   .answer {
     flex: 40%;
-    word-break: break-all;
+  }
+
+  .answer div {
+    width: auto;
   }
 
   .result img {
