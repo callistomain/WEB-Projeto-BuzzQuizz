@@ -3,19 +3,24 @@ const url = "https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes";
 const list = document.querySelector(".quizz-list");
 const page = document.querySelector(".quizz-page");
 const create = document.querySelector(".quizz-create");
+const loading = document.querySelector(".loading");
+let toLoad;
 renderMainPage();
 
 // Functions ================================================================================
 function renderMainPage() {
-	// Render all-quizzes
+    // Render all-quizzes
 	const allQuizzesList = document.querySelector(".all-quizzes ul");
+    
+    startLoading(list);
 	axios.get(url)
-		.then(promise => {
-			const data = promise.data;
-			const fragment = document.createDocumentFragment();
-			data.forEach(e => fragment.appendChild(createQuizzBox(e)));
-			allQuizzesList.replaceChildren(fragment);
-		});
+    .then(promise => {
+        const data = promise.data;
+        const fragment = document.createDocumentFragment();
+        data.forEach(e => fragment.appendChild(createQuizzBox(e)));
+        allQuizzesList.replaceChildren(fragment);
+        endLoading();
+    });
 }
 
 // Page 1 > Page 3
@@ -36,12 +41,16 @@ function toQuizzCreate() {
 
 // Page 1 > Page 2
 function toQuizzPage(e) {
-	list.classList.add("hidden");
+    list.classList.add("hidden");
 	page.classList.remove("hidden");
     window.scrollTo(0, 0);
-
+    
+    startLoading(page);
 	axios.get(url + "/" + e.currentTarget.id)
-		.then(promise => renderizarQuizz(promise.data));
+	.then(promise => {
+        renderizarQuizz(promise.data);
+        endLoading();
+    });
 }
 
 function pageToHome() {
@@ -72,6 +81,19 @@ function createQuizzBox(obj) {
 
 	quizzBox.addEventListener("click", toQuizzPage);
 	return quizzBox;
+}
+
+// HELPERS ==================================================================================
+function startLoading(element) {
+    console.log(element);
+    toLoad = element;
+    loading.classList.remove("hidden");
+    toLoad.classList.add("hidden");
+}
+
+function endLoading() {
+    loading.classList.add("hidden");
+    toLoad.classList.remove("hidden");
 }
 
 // Comportamento das respostas ==============================================================
