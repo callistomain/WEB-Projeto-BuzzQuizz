@@ -316,9 +316,8 @@ h1 {
  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.05);
 }
 .quizz-create input{
-  margin-top: 5px;
-  margin-bottom: 5px;
   height: 48px;
+  width: auto;
   border: 1px solid #D1D1D1;
   border-radius: 5px;
   padding-left: 14px;
@@ -327,8 +326,32 @@ h1 {
   font-weight: 400;
   font-size: 19px;
 }
+.quizz-create textarea{
+  height: 177px;
+  border: 1px solid #D1D1D1;
+  border-radius: 5px;
+  padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 14px;
+  padding-right: 14px;
+  outline: 0px;
+  font-weight: 400;
+  font-size: 19px;
+  resize: none;
+}
+.creation-space-1{
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 .quizz-create input::placeholder{
   font-style: italic;
+  font-weight: 400;
+  font-size: 19px;
+  color: #BABABA;
+}
+.quizz-create textarea::placeholder{
+  font-style: italic;
+  font-family: 'Roboto', sans-serif;
   font-weight: 400;
   font-size: 19px;
   color: #BABABA;
@@ -362,6 +385,14 @@ h1 {
   font-size: 20px;
   display: flex;
   flex-direction: column;
+}
+.creation-space-2{
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+.become-red{
+  background-color: #FFE9E9;
+  margin-bottom: 20px;
 }
 
 

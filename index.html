@@ -16,7 +16,7 @@
   </head>
 
   <body>
-    <header>BuzzQuizz</header>
+    <header><p onclick="pageToHome()">BuzzQuizz</p></header>
 
     <!-- Quizz Lists (Page 1) ==================================================================== -->
     <div class="quizz-list">
@@ -40,14 +40,6 @@
 
     <!-- Quizz Create (Page 3) ==================================================================== -->
     <div class="quizz-create hidden">
-      <p class="title-creation" >Comece pelo começo</p>
-      <div class="box-creation">
-        <input type="text" id="text" placeholder="Título do seu quizz" required>
-        <input type="url" id="url" placeholder="URL da imagem do seu quizz" required>
-        <input type="number" id="number1" placeholder="Quantidade de perguntas do quizz" min="0" required>
-        <input type="number" id="number2" placeholder="Quantidade de níveis do quizz" min="0" required>
-      </div>
-      <button onclick="validarInfosQuizz()">Prosseguir pra criar perguntas</button>
     </div>
   </body>
 </html>

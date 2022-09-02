@@ -22,6 +22,15 @@ function renderMainPage() {
 function toQuizzCreate() {
 	list.classList.add("hidden");
 	create.classList.remove("hidden");
+	create.innerHTML=`
+	<p class="title-creation" >Comece pelo começo</p>
+	<div class="box-creation">
+	  <input class='creation-space-1' type="text" id="text" placeholder="Título do seu quizz" required>
+	  <input class='creation-space-1' type="url" id="url" placeholder="URL da imagem do seu quizz" required>
+	  <input class='creation-space-1' type="number" id="number1" placeholder="Quantidade de perguntas do quizz" min="0" required>
+	  <input class='creation-space-1' type="number" id="number2" placeholder="Quantidade de níveis do quizz" min="0" required>
+	</div>
+	<button onclick="validarInfosQuizz()">Prosseguir pra criar perguntas</button>`
     window.scrollTo(0, 0);
 }
 
@@ -185,41 +194,115 @@ function resetQuizz() {
 }
 
 // Create Quizz ==================================================================
-let array_create_quizz = [];
-
-function go_to_create_question() {
-	const list_inputs = create.querySelectorAll('input');
-	let array = [];
-
-	for (let i = 0; i < list_inputs.length; i++) {
-		array.push(list_inputs[i].value);
+let arrayCreateQuizz = [];
+let newQuizzData=[];
+function goToCreateQuestion() {
+	const listInputs = create.querySelectorAll('input');
+	for (let i = 0; i < listInputs.length; i++) {
+		newQuizzData.push(listInputs[i].value);
 	}
 
 	create.innerHTML = `<p class="title-creation">Crie suas perguntas</p>`;
-	for (let i = 0; i < array[2]; i++) {
+	for (let i = 0; i < newQuizzData[2]; i++) {
 		create.innerHTML += `
         <div class="box-creation">
             <div class='question-creation'>
                 <div onclick='' class='external id${i + 1}'>
                     <p>Pergunta ${i + 1}</p>
-                    <ion-icon onclick='open_question(this.parentNode)' class="" name="create-outline"></ion-icon>
-            		<ion-icon onclick='open_question(this.parentNode)' class="hidden" name="remove-outline"></ion-icon>
+                    <ion-icon onclick='openQuestion(this.parentNode)' class="" name="create-outline"></ion-icon>
+            		<ion-icon onclick='openQuestion(this.parentNode)' class="hidden" name="remove-outline"></ion-icon>
                 </div>
                 <div class='internal hidden id${i + 1}'>
-                    <input type="text" id="text" placeholder="Título do seu quizz">
-                    <input type="url" id="url" placeholder="URL da imagem do seu quizz">
-                    <input type="number" id="number1" placeholder="Quantidade de perguntas do quizz">
-                    <input type="number" id="number2" placeholder="Quantidade de níveis do quizz">
+                    <input class='creation-space-1' type="text" id="text" placeholder="Texto da pergunta">
+					<input class='creation-space-1' type="text" id="text" placeholder="Cor de fundo da pergunta" required>
+					<p class='creation-space-2'>Resposta correta</p>
+					<input class='creation-space-2' type="text" id="text" placeholder="Resposta correta" required>
+					<input class='creation-space-1' type="url" id="url" placeholder="URL da imagem" required>
+					<p class='creation-space-2' >Resposta incorreta</p>
+					<input class='creation-space-2' type="text" id="text" placeholder="Resposta incorreta 1">
+					<input class='creation-space-1' type="url" id="url" placeholder="URL da imagem 1" required>
+					<input class='creation-space-2' type="text" id="text" placeholder="Resposta incorreta 2">
+					<input class='creation-space-1' type="url" id="url" placeholder="URL da imagem 2" required>
+					<input class='creation-space-2' type="text" id="text" placeholder="Resposta incorreta 3">
+					<input class='creation-space-1' type="url" id="url" placeholder="URL da imagem 3" required>
                 </div>
             </div>
         </div>
         `;
 	}
 
-	create.innerHTML = create.innerHTML + `<button onclick"">Prosseguir pra criar níveis</button>`
+	create.innerHTML = create.innerHTML + `<button onclick="validityQuestions()" >Prosseguir pra criar níveis</button>`
+	const ion = document.querySelector('.quizz-create ion-icon');
+	openQuestion(ion.parentNode);
+	window.scrollTo(0,0);
+}
+function validityQuestions(){
+	let valityValue = 1;
+	let isAllEmpty = 1;
+	const internalBox = create.querySelectorAll('.internal');
+	let inputsBoxes = [];
+	let allInputs = create.querySelectorAll('input');
+	for (let i=0; i<allInputs.length;i++){
+		allInputs[i].classList.remove('become-red');
+	}
+	for (i=0; i<internalBox.length;i++){
+		isAllEmpty = 1;
+		inputsBoxes = internalBox[i].querySelectorAll('input');
+		if (inputsBoxes[0].value.length<=20){
+			inputsBoxes[0].classList.add('become-red');
+			valityValue = 0;
+		}
+		for (ii=4;ii<inputsBoxes.length;ii++){
+			if (inputsBoxes[ii].value!='')
+				isAllEmpty=0;
+		}
+		if (isAllEmpty){
+			for (ii=4;ii<inputsBoxes.length;ii++){
+				inputsBoxes[ii].classList.add('become-red');
+			}
+		}
+		if (!/^#[0-9A-Fa-f]{6}$/i.test(inputsBoxes[1].value)){
+			inputsBoxes[1].classList.add('become-red');
+		}
+		if(!inputsBoxes[2].checkValidity()){
+			inputsBoxes[2].classList.add('become-red');
+		}
+		if(!inputsBoxes[3].checkValidity()){
+			inputsBoxes[3].classList.add('become-red');
+		}
+	}
+	if (valityValue === 1)
+		goToCreateLevel();
 }
 
-function open_question(element) {
+function goToCreateLevel(){
+	create.innerHTML = `<p class="title-creation">Agora, decida os níveis!</p>`;
+	for (let i = 0; i < newQuizzData[2]; i++) {
+		create.innerHTML += `
+        <div class="box-creation">
+            <div class='question-creation'>
+                <div onclick='' class='external id${i + 1}'>
+                    <p>Nível ${i + 1}</p>
+                    <ion-icon onclick='openQuestion(this.parentNode)' class="" name="create-outline"></ion-icon>
+            		<ion-icon onclick='openQuestion(this.parentNode)' class="hidden" name="remove-outline"></ion-icon>
+                </div>
+                <div class='internal hidden id${i + 1}'>
+                    <input class='creation-space-1' type="text" id="text" placeholder="Título do nível">
+					<input class='creation-space-1' type="text" id="text" placeholder="% de acerto mínima">
+					<input class='creation-space-1' type="url" id="text" placeholder="URL da imagem do nível">
+					<textarea class='creation-space-1' placeholder="Descrição do nível"></textarea> 
+                </div>
+            </div>
+        </div>
+        `;
+	}
+	create.innerHTML = create.innerHTML + `<button onclick="goToCreateLevel()" >Finalizar Quizz</button>`
+	const ion = document.querySelector('.quizz-create ion-icon');
+	openQuestion(ion.parentNode);
+	window.scrollTo(0,0);
+}
+
+function openQuestion(element) {
 	const internal = element.parentNode.querySelector('.internal');
 	const ion = element.querySelectorAll('ion-icon');
 	internal.classList.toggle('hidden');
@@ -231,7 +314,7 @@ function open_question(element) {
 
 // Validação do Quizz ===========================================================================
 function validarInfosQuizz() {
-	array_create_quizz = {
+	arrayCreateQuizz = {
 		titulo:'',
 		imagem:'',
 		quantidadeDePerguntas: 0,
@@ -245,24 +328,24 @@ function validarInfosQuizz() {
 	const quantidadeDePerguntas = document.querySelector("#number1");
 	const quantidadeDeNiveis = document.querySelector("#number2");
 
-	array_create_quizz.titulo = titulo.value;
-	array_create_quizz.imagem = imagem.value;
-	array_create_quizz.quantidadeDePerguntas = quantidadeDePerguntas.value;
-	array_create_quizz.quantidadeDeNiveis = quantidadeDeNiveis.value;
+	arrayCreateQuizz.titulo = titulo.value;
+	arrayCreateQuizz.imagem = imagem.value;
+	arrayCreateQuizz.quantidadeDePerguntas = quantidadeDePerguntas.value;
+	arrayCreateQuizz.quantidadeDeNiveis = quantidadeDeNiveis.value;
 
-	if (array_create_quizz.titulo.length < 20 || array_create_quizz.titulo.length > 65) {
+	if (arrayCreateQuizz.titulo.length < 20 || arrayCreateQuizz.titulo.length > 65) {
 		alert('O título deve ter no mínimo 20 caracteres e no máximo 65');
 		return;
 	} else if (!imagem.validity.valid) {
 		alert('O valor informado não é uma URL válida');
 		return;
-    } else if (array_create_quizz.quantidadeDePerguntas < 3) {
+    } else if (arrayCreateQuizz.quantidadeDePerguntas < 3) {
 		alert('Quantidade mínima de perguntas 3');
 		return;
-	} else if (array_create_quizz.quantidadeDeNiveis < 2) {
+	} else if (arrayCreateQuizz.quantidadeDeNiveis < 2) {
 		alert('Quantidade mínima de níveis 2');
 		return;
 	}
 
-    go_to_create_question();
+    goToCreateQuestion();
 }
