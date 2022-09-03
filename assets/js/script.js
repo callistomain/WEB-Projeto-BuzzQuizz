@@ -15,10 +15,45 @@ function renderMainPage() {
     startLoading(list);
 	axios.get(url)
     .then(promise => {
-        const data = promise.data;
-        const fragment = document.createDocumentFragment();
-        data.forEach(e => fragment.appendChild(createQuizzBox(e)));
+        const allQuizzes = promise.data;
+        const userList = JSON.parse(localStorage.getItem("userList"));
+        
+        // Filtering user quizzes
+        if (userList) {
+            const myQuizzesList = document.querySelector(".my-quizzes ul");
+            document.querySelector(".empty-quizz").classList.add("hidden");
+            document.querySelector(".my-title").classList.remove("hidden");
+            const myQuizzes = [];
+
+            for (let i = 0; i < allQuizzes.length; i++) {
+                let isFromUser = false;
+
+                for (let j = 0; j < userList.length; j++) {
+                    if (allQuizzes[i].id === userList[j]) {
+                        userList.splice(j, 1);
+                        isFromUser = true;
+                        break;
+                    }
+                }
+
+                if (isFromUser) {
+                    myQuizzes.push(allQuizzes[i]);
+                    allQuizzes.splice(i, 1);
+                    i--;
+                }
+            }
+
+            // My Quizzes
+            let fragment = document.createDocumentFragment();
+            myQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
+            myQuizzesList.replaceChildren(fragment);
+        }
+
+        // All Quizzes
+        fragment = document.createDocumentFragment();
+        allQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
         allQuizzesList.replaceChildren(fragment);
+
         endLoading();
     });
 }
@@ -85,7 +120,6 @@ function createQuizzBox(obj) {
 
 // HELPERS ==================================================================================
 function startLoading(element) {
-    console.log(element);
     toLoad = element;
     loading.classList.remove("hidden");
     toLoad.classList.add("hidden");

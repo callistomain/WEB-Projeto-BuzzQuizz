@@ -84,6 +84,25 @@ header p{
   cursor: pointer;
 }
 
+/* My-Quizzes =============== */
+.my-title {
+    display: flex;
+    align-items: center;
+    margin-top: 80px;
+}
+
+.my-title ion-icon {
+    margin-left: 10px;
+    color: #EC362D;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+.my-quizzes {
+    margin-top: 10px;
+    margin-bottom: 60px;
+}
+
 /* All-Quizzes ============== */
 .all-quizzes {
   padding: 20px 0;
@@ -95,7 +114,8 @@ h1 {
   font-weight: bold;
 }
 
-.all-quizzes ul {
+.all-quizzes ul,
+.my-quizzes ul {
   width: 1050px;
   display: flex;
   flex-wrap: wrap;
@@ -493,6 +513,9 @@ h1 {
   .empty-quizz,
   .quizz-box,
   .all-quizzes ul,
+  .my-quizzes ul,
+  .all-quizzes,
+  .my-quizzes,
   .question-box,
   .title-wrapper,
   .result,
