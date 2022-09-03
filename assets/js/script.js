@@ -11,6 +11,7 @@ renderMainPage();
 function renderMainPage() {
     // Render all-quizzes
 	const allQuizzesList = document.querySelector(".all-quizzes ul");
+    let fragment;
     
     startLoading(list);
 	axios.get(url)
@@ -44,7 +45,7 @@ function renderMainPage() {
             }
 
             // My Quizzes
-            let fragment = document.createDocumentFragment();
+            fragment = document.createDocumentFragment();
             myQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
             myQuizzesList.replaceChildren(fragment);
         }
