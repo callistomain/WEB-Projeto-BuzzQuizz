@@ -21,12 +21,10 @@ function renderMainPage() {
 	// Render all-quizzes
 	const allQuizzesList = document.querySelector(".all-quizzes ul");
 	const myQuizzesList = document.querySelector(".my-quizzes ul");
-	console.log(myQuizzesList);
 	myQuizzesList.innerHTML='';
 	let text;
 	startLoading(list);
 	const userList = JSON.parse(localStorage.getItem("userList"));
-	console.log(userList)
 	if (userList!=null){
 		document.querySelector(".empty-quizz").classList.add("hidden");
 		document.querySelector(".my-title").classList.remove("hidden");
@@ -390,6 +388,44 @@ function goToCreateEnd(element){
     endLoading();
 }
 
+function getEndToEdit(element){
+	loading.classList.add('hidden');
+	let listaSerializada = localStorage.getItem("lista");
+	const lista = JSON.parse(listaSerializada);
+    
+	let lista2 = JSON.parse(localStorage.getItem("userList"));
+	if (lista2) {
+		lista2.push({
+            id: element.data.id,
+			secretKey: element.data.key
+		});
+	} else {
+		lista2 = [{
+            id: element.data.id,
+			secretKey: element.data.key
+		}];
+	}
+	localStorage.setItem("userList", JSON.stringify(lista2));
+
+	create.innerHTML = `
+        <p class="title-creation">Seu quizz foi editado!</p>
+        <div class="quizz-box-2" id="${element.data.id}">
+            <img src=${lista[0].image}>
+            <div class="gradient"></div>
+            <span>${lista[0].title}</span>
+        </div>
+        <button class='create-end' id="${element.data.id}">Acessar Quizz</button>
+        <h4 onclick="returnToHome()">Voltar pra home</h4>
+    `;
+
+	window.scrollTo(0,0);
+	const image = create.querySelector('.quizz-box-2');
+	image.addEventListener("click", createToPage);
+	const button = create.querySelector('button');
+	button.addEventListener("click", createToPage);
+    endLoading();
+}
+
 function getQuestions(){
 	const internalBox = create.querySelectorAll('.internal');
 	let inputsBoxes = [];
@@ -449,6 +485,21 @@ function exportQuizz() {
 	response.then(goToCreateEnd);
     response.catch(endLoading);
 }
+function exportQuizz2() {
+	//objectPcEdit
+	arrayEditQuizz = [{
+		title: arrayCreateQuizz[0].title,
+		image: arrayCreateQuizz[0].image,
+		questions: arrayCreateQuizz[0].questions,
+		levels: arrayCreateQuizz[0].levels
+	}];
+	console.log(arrayEditQuizz);
+	loading.classList.remove('hidden');
+    startLoading(create);
+	let response = axios.put('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/'+objectPcEdit.id, arrayEditQuizz[0], {headers: {"Secret-Key": objectPcEdit.secretKey},});
+	response.then(getEndToEdit);
+    response.catch(endLoading);
+}
 
 function toggleQuestion(element) {
 	const internal = element.parentNode.querySelector('.internal');
@@ -489,8 +540,14 @@ function createToPage(e) {
     }).catch(endLoading);
 }
 // Quizz Edit ===================================================================================
+let objectPcEdit;
 function quizzEdit(element){
 	let response = axios.get(url+'/'+element.id);
+	const userList = JSON.parse(localStorage.getItem("userList"));
+	for (i=0;i<userList.length;i++){
+		if(element.id==userList[i].id)
+			objectPcEdit=userList[i];
+	}
 	response.then(getQuizzToEdit);
 }
 let arrayEditQuizz;
@@ -510,19 +567,70 @@ function getQuizzToEdit(element){
 	arrayInputs[3].value=arrayEditQuizz[0].levels.length;
 	create.querySelector('p').innerHTML='Editar o começo';
 	create.querySelector('button').innerHTML='Prosseguir pra editar perguntas';
-	create.querySelector('button').onclick='goToEditQuestions()';
+	create.querySelector('button').onclick=goToEditQuestions;
+	console.log(create.querySelector('button').onclick)
 }
 function goToEditQuestions(){
 	const vality = validarInfosQuizz();
 	if (vality==1)
 		getQuestionsToEdit();
 }
+function goToEditLevels(){
+	const vality = validityQuestions();
+	if (vality==1)
+		getLevelsToEdit();
+}
+function goToEditEnd(){
+	const vality = validityLevels('ok');
+	if (vality==1){
+		exportQuizz2();
+	}
+}
+
 function getQuestionsToEdit(){
 	let arrayInternals = create.querySelectorAll('.internal');
 	let arrayInputs;
-	for (i=0;i<arrayInternals.length;i++){
-		arrayInputs = create.querySelectorAll('input');
+	let maxQuestions;
+	if (arrayEditQuizz[0].questions.length<arrayInternals.length)
+		maxQuestions=arrayEditQuizz[0].questions.length;
+	else
+		maxQuestions=arrayInternals.length
+	for (i=0;i<maxQuestions;i++){
+		arrayInputs = arrayInternals[i].querySelectorAll('input');
+		//title: "Título da pergunta 1",
+		//color: "#123456",
+		arrayInputs[0].value=arrayEditQuizz[0].questions[i].title;
+		arrayInputs[1].value=arrayEditQuizz[0].questions[i].color;
+		for (j=2;j<(arrayEditQuizz[0].questions[i].answers.length*2)+2;j+=2){
+			//text: "Texto da resposta 1",
+			//image: "https://http.cat/411.jpg",
+			arrayInputs[j].value=arrayEditQuizz[0].questions[i].answers[(j/2)-1].text;
+			arrayInputs[j+1].value=arrayEditQuizz[0].questions[i].answers[(j/2)-1].image;
+		}
 	}
+	create.querySelector('p').innerHTML='Edite suas perguntas';
+	create.querySelector('button').innerHTML='Prosseguir pra editar níveis';
+	create.querySelector('button').onclick=goToEditLevels;
+}
+
+function getLevelsToEdit(){
+	let arrayInternals = create.querySelectorAll('.internal');
+	let arrayInputs;
+	let maxLevels;
+	if (arrayEditQuizz[0].levels.length<arrayInternals.length)
+		maxLevels=arrayEditQuizz[0].levels.length;
+	else
+		maxLevels=arrayInternals.length
+	for (i=0;i<maxLevels;i++){
+		arrayInputs = arrayInternals[i].querySelectorAll('input');
+		arrayInputs[0].value=arrayEditQuizz[0].levels[i].title;
+		arrayInputs[1].value=arrayEditQuizz[0].levels[i].minValue;
+		arrayInputs[2].value=arrayEditQuizz[0].levels[i].image;
+		arrayInternals[i].querySelector('textarea').value=arrayEditQuizz[0].levels[i].text;
+	}
+	create.querySelector('p').innerHTML='Edite seus níveis!';
+	create.querySelector('button').innerHTML='Finalizar edição';
+	create.querySelector('button').onclick=goToEditEnd;
 }
 // Validação do Quizz ===========================================================================
 function validarInfosQuizz() {
@@ -703,13 +811,15 @@ function validityQuestions(){
 	if (valityValue === 1){
 		getQuestions();
 		goToCreateLevel();
+		return 1;
 	}else{
 		window.scrollTo(0,0);
+		return 0;
 	}
 }
 
 
-function validityLevels() {
+function validityLevels(edit) {
 	let valityValue = 1;
 	let thereA0Percent = 0;
 	const internalBox = create.querySelectorAll('.internal');
@@ -788,12 +898,17 @@ function validityLevels() {
 			closeQuestion(internalBox[ii].parentNode.querySelector('.external'));
 		}
 	}
-	if (valityValue === 1){
+	if (valityValue === 1&&edit!=='ok'){
 		getLevels();
 		exportQuizz();
 		create.innerHTML=``;
+	}else if(edit==='ok') {
+		getLevels();
+		create.innerHTML=``;
+		return 1;
 	}else
 		window.scrollTo(0,0);
+		return 0;
 }
 
 function returnToHome() {
