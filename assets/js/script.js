@@ -8,18 +8,41 @@ let toLoad;
 renderMainPage();
 
 // Functions ================================================================================
+function testQuizz(element){
+	const myQuizzesList = document.querySelector(".my-quizzes ul");
+	console.log()
+	if (myQuizzesList.innerHTML=='')
+		myQuizzesList.replaceChildren(createQuizzBox(element.data));
+	else
+		myQuizzesList.appendChild(createQuizzBox(element.data));
+}
+
 function renderMainPage() {
 	// Render all-quizzes
 	const allQuizzesList = document.querySelector(".all-quizzes ul");
-    startLoading(list);
-
+	const myQuizzesList = document.querySelector(".my-quizzes ul");
+	console.log(myQuizzesList);
+	myQuizzesList.innerHTML='';
+	let text;
+	startLoading(list);
+	const userList = JSON.parse(localStorage.getItem("userList"));
+	console.log(userList)
+	if (userList!=null){
+		document.querySelector(".empty-quizz").classList.add("hidden");
+		document.querySelector(".my-title").classList.remove("hidden");
+		document.querySelector(".my-quizzes").classList.remove("hidden");
+		for (let j = 0; j < userList.length; j++){
+			text = axios.get(url+'/'+userList[j].id);
+			text.then(testQuizz);
+		}
+	}
 	axios.get(url)
     .then(promise => {
         const allQuizzes = promise.data;
         const userList = JSON.parse(localStorage.getItem("userList"));
 
         // Filtering user quizzes
-        if (userList) {
+        /*if (userList) {
             const myQuizzes = [];
             for (let i = 0; i < allQuizzes.length; i++) {
                 let isFromUser = false;
@@ -49,7 +72,7 @@ function renderMainPage() {
                 myQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
                 myQuizzesList.replaceChildren(fragment);
             }
-        }
+        }*/
 
         // All Quizzes
         fragment = document.createDocumentFragment();
@@ -465,7 +488,42 @@ function createToPage(e) {
         endLoading();
     }).catch(endLoading);
 }
-
+// Quizz Edit ===================================================================================
+function quizzEdit(element){
+	let response = axios.get(url+'/'+element.id);
+	response.then(getQuizzToEdit);
+}
+let arrayEditQuizz;
+function getQuizzToEdit(element){
+	let object = [{
+		title: element.data.title,
+		image: element.data.image,
+		questions: element.data.questions,
+		levels: element.data.levels
+	}];
+	arrayEditQuizz=object;
+	homeToCreate();
+	let arrayInputs = create.querySelectorAll('input');
+	arrayInputs[0].value=arrayEditQuizz[0].title;
+	arrayInputs[1].value=arrayEditQuizz[0].image;
+	arrayInputs[2].value=arrayEditQuizz[0].questions.length;
+	arrayInputs[3].value=arrayEditQuizz[0].levels.length;
+	create.querySelector('p').innerHTML='Editar o começo';
+	create.querySelector('button').innerHTML='Prosseguir pra editar perguntas';
+	create.querySelector('button').onclick='goToEditQuestions()';
+}
+function goToEditQuestions(){
+	const vality = validarInfosQuizz();
+	if (vality==1)
+		getQuestionsToEdit();
+}
+function getQuestionsToEdit(){
+	let arrayInternals = create.querySelectorAll('.internal');
+	let arrayInputs;
+	for (i=0;i<arrayInternals.length;i++){
+		arrayInputs = create.querySelectorAll('input');
+	}
+}
 // Validação do Quizz ===========================================================================
 function validarInfosQuizz() {
 	let valityValue = 1;
@@ -512,8 +570,12 @@ function validarInfosQuizz() {
 		valityValue = 0;
 		inputsBoxes[3].insertAdjacentHTML("afterend", "<h1>Quantidade mínima de níveis 2.</h1>");
 	}
-	if (valityValue === 1)
+	if (valityValue === 1){
     	goToCreateQuestion();
+		return 1;
+	}
+	else
+		return 0;
 }
 
 function validityQuestions(){
