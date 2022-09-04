@@ -8,111 +8,95 @@ let toLoad;
 renderMainPage();
 
 // Functions ================================================================================
-
-
-function testQuizz(element){
-	const myQuizzesList = document.querySelector(".my-quizzes ul");
-	if (myQuizzesList.innerHTML=='')
-		myQuizzesList.replaceChildren(createQuizzBox(element.data));
-	else
-		myQuizzesList.appendChild(createQuizzBox(element.data));
-}
-
 function renderMainPage() {
 	// Render all-quizzes
 	const allQuizzesList = document.querySelector(".all-quizzes ul");
-	const myQuizzesList = document.querySelector(".my-quizzes ul");
-	myQuizzesList.innerHTML='';
-	let text;
-	startLoading(list);
-	const userList = JSON.parse(localStorage.getItem("userList"));
-	if (userList!=null){
-		document.querySelector(".empty-quizz").classList.add("hidden");
-		document.querySelector(".my-title").classList.remove("hidden");
-		for (let j = 0; j < userList.length; j++){
-			text = axios.get(url+'/'+userList[j].id);
-			text.then(testQuizz);
-		}
-	}
+    startLoading(list);
+
 	axios.get(url)
-		.then(promise => {
-			const allQuizzes = promise.data;
-			/*const userList = JSON.parse(localStorage.getItem("userList"));
-			// Filtering user quizzes
-			if (userList) {
-				const myQuizzesList = document.querySelector(".my-quizzes ul");
-				document.querySelector(".empty-quizz").classList.add("hidden");
-				document.querySelector(".my-title").classList.remove("hidden");
-				const myQuizzes = [];
+    .then(promise => {
+        const allQuizzes = promise.data;
+        const userList = JSON.parse(localStorage.getItem("userList"));
 
-				for (let i = 0; i < allQuizzes.length; i++) {
-					let isFromUser = false;
-					console.log(userList[0]);
-					for (let j = 0; j < userList.length; j++) {
-						if (allQuizzes[i].id === userList[j].id) {
-							userList.splice(j, 1);
-							isFromUser = true;
-							break;
-						}
-					}
+        // Filtering user quizzes
+        if (userList) {
+            const myQuizzes = [];
+            for (let i = 0; i < allQuizzes.length; i++) {
+                let isFromUser = false;
+                for (let j = 0; j < userList.length; j++) {
+                    if (allQuizzes[i].id === userList[j].id) {
+                        userList.splice(j, 1);
+                        isFromUser = true;
+                        break;
+                    }
+                }
+                
+                if (isFromUser) {
+                    myQuizzes.push(allQuizzes[i]);
+                    allQuizzes.splice(i, 1);
+                    i--;
+                }
+            }
+            
+            // My Quizzes
+            if (myQuizzes.length) {
+                const myQuizzesList = document.querySelector(".my-quizzes ul");
+                document.querySelector(".empty-quizz").classList.add("hidden");
+                document.querySelector(".my-quizzes").classList.remove("hidden");
+                document.querySelector(".my-title").classList.remove("hidden");
 
-					if (isFromUser) {
-						myQuizzes.push(allQuizzes[i]);
-						allQuizzes.splice(i, 1);
-						i--;
-					}
-				}
+                fragment = document.createDocumentFragment();
+                myQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
+                myQuizzesList.replaceChildren(fragment);
+            }
+        }
 
-				// My Quizzes
-				fragment = document.createDocumentFragment();
-				myQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
-				myQuizzesList.replaceChildren(fragment);
-			}*/
+        // All Quizzes
+        fragment = document.createDocumentFragment();
+        allQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
+        allQuizzesList.replaceChildren(fragment);
 
-			// All Quizzes
-			fragment = document.createDocumentFragment();
-			allQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
-			allQuizzesList.replaceChildren(fragment);
-
-			endLoading();
-		});
-}
-
-// Page 1 > Page 3
-function toQuizzCreate() {
-	list.classList.add("hidden");
-	create.classList.remove("hidden");
-	create.innerHTML = `
-	<p class="title-creation" >Comece pelo começo</p>
-	<div class="box-creation">
-	  <input class='creation-space-1' type="text" id="text" placeholder="Título do seu quizz" required>
-	  <input class='creation-space-1' type="url" id="url" placeholder="URL da imagem do seu quizz" required>
-	  <input class='creation-space-1' type="number" id="number1" placeholder="Quantidade de perguntas do quizz" min="0" required>
-	  <input class='creation-space-1' type="number" id="number2" placeholder="Quantidade de níveis do quizz" min="0" required>
-	</div>
-	<button class='button' onclick="validarInfosQuizz()">Prosseguir pra criar perguntas</button>`
-    window.scrollTo(0, 0);
+        endLoading();
+    }).catch(endLoading);
 }
 
 // Page 1 > Page 2
-function toQuizzPage(e) {
+function homeToPage(e) {
 	list.classList.add("hidden");
 	page.classList.remove("hidden");
 	window.scrollTo(0, 0);
-
+    
 	startLoading(page);
 	axios.get(url + "/" + e.currentTarget.id)
-		.then(promise => {
-			renderizarQuizz(promise.data);
-			endLoading();
-		});
+    .then(promise => {
+        renderizarQuizz(promise.data);
+        endLoading();
+    }).catch(endLoading);
 }
 
+// Page 2 > Page 1
 function pageToHome() {
-	page.classList.add("hidden");
-	list.classList.remove("hidden");
-	window.scrollTo(0, 0);
-	renderMainPage();
+    page.classList.add("hidden");
+    list.classList.remove("hidden");
+    window.scrollTo(0, 0);
+    renderMainPage();
+}
+
+// Page 1 > Page 3
+function homeToCreate() {
+    list.classList.add("hidden");
+    create.classList.remove("hidden");
+    create.innerHTML = `
+        <p class="title-creation" >Comece pelo começo</p>
+        <div class="box-creation">
+            <input class='creation-space-1' type="text" id="text" placeholder="Título do seu quizz" required>
+            <input class='creation-space-1' type="url" id="url" placeholder="URL da imagem do seu quizz" required>
+            <input class='creation-space-1' type="number" id="number1" placeholder="Quantidade de perguntas do quizz" min="0" required>
+            <input class='creation-space-1' type="number" id="number2" placeholder="Quantidade de níveis do quizz" min="0" required>
+        </div>
+        <button class='button' onclick="validarInfosQuizz()">Prosseguir pra criar perguntas</button>
+    `;
+    window.scrollTo(0, 0);
 }
 
 // DOM ======================================================================================
@@ -134,7 +118,7 @@ function createQuizzBox(obj) {
 	quizzBox.appendChild(grad);
 	quizzBox.appendChild(title);
 
-	quizzBox.addEventListener("click", toQuizzPage);
+	quizzBox.addEventListener("click", homeToPage);
 	return quizzBox;
 }
 
@@ -151,7 +135,7 @@ function endLoading() {
 }
 
 // Comportamento das respostas ==============================================================
-const delay = 100; // 2000
+const delay = 500; // 2000
 let acertos, selecionados, quizzAtual;
 
 function renderizarQuizz(quizz) {
@@ -180,6 +164,7 @@ function renderizarQuizz(quizz) {
 
 function gerarCardPergunta(pergunta) {
 	let respostas = "";
+    pergunta.answers.sort(() => Math.random() - 0.5);
 	pergunta.answers.forEach(function (resposta) {
 		respostas += `
             <div class="answer ${resposta.isCorrectAnswer}" onclick="escolherResposta(this)">
@@ -234,6 +219,7 @@ function resolveResult() {
 		const percentage = Math.floor((acertos / len) * 100);
 		let i;
 
+        levels.sort((a, b) => a.minValue - b.minValue);
 		for (i = levels.length - 1; i >= 0; i--) {
 			if (percentage >= levels[i].minValue) break;
 		}
@@ -272,9 +258,11 @@ function resetQuizz() {
 // Create Quizz ==================================================================
 let arrayCreateQuizz = [];
 let newQuizzData = [];
+
 function goToCreateQuestion() {
 	newQuizzData = [];
 	const listInputs = create.querySelectorAll('input');
+
 	for (let i = 0; i < listInputs.length; i++) {
 		newQuizzData.push(listInputs[i].value);
 	}
@@ -345,31 +333,38 @@ function goToCreateEnd(element){
 	loading.classList.add('hidden');
 	let listaSerializada = localStorage.getItem("lista");
 	const lista = JSON.parse(listaSerializada);
+    
 	let lista2 = JSON.parse(localStorage.getItem("userList"));
-	if (lista2){
-		lista2.push({id: element.data.id,
+	if (lista2) {
+		lista2.push({
+            id: element.data.id,
 			secretKey: element.data.key
 		});
-	}else{
-		lista2=[{id: element.data.id,
+	} else {
+		lista2 = [{
+            id: element.data.id,
 			secretKey: element.data.key
 		}];
 	}
 	localStorage.setItem("userList", JSON.stringify(lista2));
+
 	create.innerHTML = `
-	<p class="title-creation">Seu quizz está pronto!</p>
-	<div class="quizz-box-2" id="${element.data.id}">
-		<img src=${lista[0].image}>
-		<div class="gradient"></div>
-		<span>${lista[0].title}</span>
-	</div>
-	<button class='create-end' id="${element.data.id}">Acessar Quizz</button>
-	<h4 onclick="returnToHome()">Voltar pra home</h4>`;
+        <p class="title-creation">Seu quizz está pronto!</p>
+        <div class="quizz-box-2" id="${element.data.id}">
+            <img src=${lista[0].image}>
+            <div class="gradient"></div>
+            <span>${lista[0].title}</span>
+        </div>
+        <button class='create-end' id="${element.data.id}">Acessar Quizz</button>
+        <h4 onclick="returnToHome()">Voltar pra home</h4>
+    `;
+
 	window.scrollTo(0,0);
 	const image = create.querySelector('.quizz-box-2');
-	image.addEventListener("click", toQuizzPage2);
+	image.addEventListener("click", createToPage);
 	const button = create.querySelector('button');
-	button.addEventListener("click", toQuizzPage2);
+	button.addEventListener("click", createToPage);
+    endLoading();
 }
 
 function getQuestions(){
@@ -422,12 +417,14 @@ function getLevels(){
 	arrayCreateQuizz[0].levels = arrayLevels;
 }
 
-function exportQuizz(){
+function exportQuizz() {
 	const exemploSerializado = JSON.stringify(arrayCreateQuizz);
 	localStorage.setItem("lista", exemploSerializado);
 	loading.classList.remove('hidden');
-	let response = axios.post('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes',arrayCreateQuizz[0]);
+    startLoading(create);
+	let response = axios.post('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes', arrayCreateQuizz[0]);
 	response.then(goToCreateEnd);
+    response.catch(endLoading);
 }
 
 function toggleQuestion(element) {
@@ -438,6 +435,7 @@ function toggleQuestion(element) {
         ion[i].classList.toggle('hidden');
     }
 }
+
 function openQuestion(element) {
 	const internal = element.parentNode.querySelector('.internal');
 	const ion = element.querySelectorAll('ion-icon');
@@ -445,6 +443,7 @@ function openQuestion(element) {
 	ion[0].classList.add('hidden');
 	ion[1].classList.remove('hidden');
 }
+
 function closeQuestion(element) {
 	const internal = element.parentNode.querySelector('.internal');
 	const ion = element.querySelectorAll('ion-icon');
@@ -453,8 +452,8 @@ function closeQuestion(element) {
 	ion[1].classList.add('hidden');
 }
 
-
-function toQuizzPage2(e) {
+// Page 3 > Page 2
+function createToPage(e) {
     create.classList.add("hidden");
 	page.classList.remove("hidden");
     window.scrollTo(0, 0);
@@ -464,7 +463,7 @@ function toQuizzPage2(e) {
 	.then(promise => {
         renderizarQuizz(promise.data);
         endLoading();
-    });
+    }).catch(endLoading);
 }
 
 // Validação do Quizz ===========================================================================
@@ -735,11 +734,12 @@ function validityLevels() {
 		window.scrollTo(0,0);
 }
 
-function returnToHome(){
+function returnToHome() {
 	page.classList.add('hidden');
 	create.classList.add('hidden');
-	loading.classList.add('hidden');
 	list.classList.remove('hidden');
+    window.scrollTo(0, 0);
+	renderMainPage();
 }
 
 
@@ -753,6 +753,7 @@ function deletar() {
 		confirmar.then(mostrarResposta);
     }
 }
+
 function mostrarResposta(response) {
 	if (response.status === 200) {
 		alert('Quizz excluído com sucesso');
