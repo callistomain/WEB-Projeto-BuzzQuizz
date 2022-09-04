@@ -9,25 +9,61 @@ renderMainPage();
 
 // Functions ================================================================================
 function renderMainPage() {
-    // Render all-quizzes
+	// Render all-quizzes
 	const allQuizzesList = document.querySelector(".all-quizzes ul");
-    
-    startLoading(list);
+	let fragment;
+
+	startLoading(list);
 	axios.get(url)
-    .then(promise => {
-        const data = promise.data;
-        const fragment = document.createDocumentFragment();
-        data.forEach(e => fragment.appendChild(createQuizzBox(e)));
-        allQuizzesList.replaceChildren(fragment);
-        endLoading();
-    });
+		.then(promise => {
+			const allQuizzes = promise.data;
+			const userList = JSON.parse(localStorage.getItem("userList"));
+
+			// Filtering user quizzes
+			if (userList) {
+				const myQuizzesList = document.querySelector(".my-quizzes ul");
+				document.querySelector(".empty-quizz").classList.add("hidden");
+				document.querySelector(".my-title").classList.remove("hidden");
+				const myQuizzes = [];
+
+				for (let i = 0; i < allQuizzes.length; i++) {
+					let isFromUser = false;
+
+					for (let j = 0; j < userList.length; j++) {
+						if (allQuizzes[i].id === userList[j]) {
+							userList.splice(j, 1);
+							isFromUser = true;
+							break;
+						}
+					}
+
+					if (isFromUser) {
+						myQuizzes.push(allQuizzes[i]);
+						allQuizzes.splice(i, 1);
+						i--;
+					}
+				}
+
+				// My Quizzes
+				fragment = document.createDocumentFragment();
+				myQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
+				myQuizzesList.replaceChildren(fragment);
+			}
+
+			// All Quizzes
+			fragment = document.createDocumentFragment();
+			allQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
+			allQuizzesList.replaceChildren(fragment);
+
+			endLoading();
+		});
 }
 
 // Page 1 > Page 3
 function toQuizzCreate() {
 	list.classList.add("hidden");
 	create.classList.remove("hidden");
-	create.innerHTML=`
+	create.innerHTML = `
 	<p class="title-creation" >Comece pelo começo</p>
 	<div class="box-creation">
 	  <input class='creation-space-1' type="text" id="text" placeholder="Título do seu quizz" required>
@@ -41,23 +77,23 @@ function toQuizzCreate() {
 
 // Page 1 > Page 2
 function toQuizzPage(e) {
-    list.classList.add("hidden");
+	list.classList.add("hidden");
 	page.classList.remove("hidden");
-    window.scrollTo(0, 0);
-    
-    startLoading(page);
+	window.scrollTo(0, 0);
+
+	startLoading(page);
 	axios.get(url + "/" + e.currentTarget.id)
-	.then(promise => {
-        renderizarQuizz(promise.data);
-        endLoading();
-    });
+		.then(promise => {
+			renderizarQuizz(promise.data);
+			endLoading();
+		});
 }
 
 function pageToHome() {
-    page.classList.add("hidden");
-    list.classList.remove("hidden");
-    window.scrollTo(0, 0);
-    renderMainPage();
+	page.classList.add("hidden");
+	list.classList.remove("hidden");
+	window.scrollTo(0, 0);
+	renderMainPage();
 }
 
 // DOM ======================================================================================
@@ -85,15 +121,14 @@ function createQuizzBox(obj) {
 
 // HELPERS ==================================================================================
 function startLoading(element) {
-    console.log(element);
-    toLoad = element;
-    loading.classList.remove("hidden");
-    toLoad.classList.add("hidden");
+	toLoad = element;
+	loading.classList.remove("hidden");
+	toLoad.classList.add("hidden");
 }
 
 function endLoading() {
-    loading.classList.add("hidden");
-    toLoad.classList.remove("hidden");
+	loading.classList.add("hidden");
+	toLoad.classList.remove("hidden");
 }
 
 // Comportamento das respostas ==============================================================
@@ -101,8 +136,8 @@ const delay = 100; // 2000
 let acertos, selecionados, quizzAtual;
 
 function renderizarQuizz(quizz) {
-    acertos = 0;
-    selecionados = 0;
+	acertos = 0;
+	selecionados = 0;
 	quizzAtual = quizz;
 
 	let perguntas = '';
@@ -211,15 +246,15 @@ function resolveResult() {
 }
 
 function resetQuizz() {
-    renderizarQuizz(quizzAtual);
-    window.scrollTo(0, 0);
+	renderizarQuizz(quizzAtual);
+	window.scrollTo(0, 0);
 }
 
 // Create Quizz ==================================================================
 let arrayCreateQuizz = [];
-let newQuizzData=[];
+let newQuizzData = [];
 function goToCreateQuestion() {
-	newQuizzData=[];
+	newQuizzData = [];
 	const listInputs = create.querySelectorAll('input');
 	for (let i = 0; i < listInputs.length; i++) {
 		newQuizzData.push(listInputs[i].value);
@@ -257,7 +292,7 @@ function goToCreateQuestion() {
 	create.innerHTML = create.innerHTML + `<button class='button' onclick="validityQuestions()" >Prosseguir pra criar níveis</button>`
 	const ion = document.querySelector('.quizz-create ion-icon');
 	toggleQuestion(ion.parentNode);
-	window.scrollTo(0,0);
+	window.scrollTo(0, 0);
 }
 
 function goToCreateLevel(){
@@ -475,24 +510,24 @@ function validityQuestions(){
 	let allH1 = create.querySelectorAll('h1');
 	let allH2 = create.querySelectorAll('h2');
 	let allH3 = create.querySelectorAll('h3');
-	for (let i=0; i<allInputs.length;i++){
+	for (let i = 0; i < allInputs.length; i++) {
 		allInputs[i].classList.remove('become-red');
 		allInputs[i].classList.remove('become-red-2');
 		allInputs[i].classList.remove('become-red-3');
 	}
-	for (i=0; i<internalBox.length;i++){
+	for (i = 0; i < internalBox.length; i++) {
 		internalBox[i].parentNode.classList.remove('error');
 	}
-	for (i=0; i<allH1.length;i++){
+	for (i = 0; i < allH1.length; i++) {
 		allH1[i].remove();
 	}
-	for (i=0; i<allH3.length;i++){
+	for (i = 0; i < allH3.length; i++) {
 		allH3[i].remove();
 	}
-	for (i=0; i<allH2.length;i++){
+	for (i = 0; i < allH2.length; i++) {
 		allH2[i].remove();
 	}
-	for (i=0; i<internalBox.length;i++){
+	for (i = 0; i < internalBox.length; i++) {
 		isAllEmpty = 1;
 		inputsBoxes = internalBox[i].querySelectorAll('input');
 		if (inputsBoxes[0].value.length<20){
@@ -502,11 +537,11 @@ function validityQuestions(){
 			openQuestion(internalBox[i].parentNode.querySelector('.external'));
 			inputsBoxes[0].insertAdjacentHTML("afterend", "<h1>O texto deve ter mais que 20 caracteres.</h1>");
 		}
-		for (ii=4;ii<inputsBoxes.length;ii++){
-			if (inputsBoxes[ii].value!='')
-				isAllEmpty=0;
+		for (ii = 4; ii < inputsBoxes.length; ii++) {
+			if (inputsBoxes[ii].value != '')
+				isAllEmpty = 0;
 		}
-		if (inputsBoxes[2].value===''&&inputsBoxes[3].value===''){
+		if (inputsBoxes[2].value === '' && inputsBoxes[3].value === '') {
 			internalBox[i].parentNode.classList.add('error');
 			inputsBoxes[2].classList.add('become-red');
 			inputsBoxes[3].classList.add('become-red');
@@ -520,7 +555,7 @@ function validityQuestions(){
 				inputsBoxes[2].insertAdjacentHTML("afterend", "<h1>Este campo não pode ficar vazio.</h1>");
 				valityValue = 0;
 			}
-			if(!inputsBoxes[3].checkValidity()){
+			if (!inputsBoxes[3].checkValidity()) {
 				internalBox[i].parentNode.classList.add('error');
 				inputsBoxes[3].classList.add('become-red');
 				openQuestion(internalBox[i].parentNode.querySelector('.external'));
@@ -529,16 +564,16 @@ function validityQuestions(){
 			}}
 		if (isAllEmpty){
 			inputsBoxes[4].insertAdjacentHTML("beforebegin", "<h2>Coloque pelo menos uma resposta incorreta.</h2>");
-			for (ii=4;ii<inputsBoxes.length;ii++){
+			for (ii = 4; ii < inputsBoxes.length; ii++) {
 				internalBox[i].parentNode.classList.add('error');
 				inputsBoxes[ii].classList.add('become-red-2');
 				openQuestion(internalBox[i].parentNode.querySelector('.external'));
 				valityValue = 0;
 			}
 		}
-		else{
-			if (inputsBoxes[4].value!==''||inputsBoxes[5].value!==''){
-				if (inputsBoxes[4].value===''){
+		else {
+			if (inputsBoxes[4].value !== '' || inputsBoxes[5].value !== '') {
+				if (inputsBoxes[4].value === '') {
 					internalBox[i].parentNode.classList.add('error');
 					inputsBoxes[4].classList.add('become-red-3');
 					openQuestion(internalBox[i].parentNode.querySelector('.external'));
@@ -551,8 +586,8 @@ function validityQuestions(){
 					inputsBoxes[5].insertAdjacentHTML("afterend", "<h1>Coloque uma URL valida.</h1>");
 					valityValue = 0;
 				}
-			}if (inputsBoxes[6].value!==''||inputsBoxes[7].value!==''){
-				if (inputsBoxes[6].value===''){
+			} if (inputsBoxes[6].value !== '' || inputsBoxes[7].value !== '') {
+				if (inputsBoxes[6].value === '') {
 					internalBox[i].parentNode.classList.add('error');
 					inputsBoxes[6].classList.add('become-red-3');
 					inputsBoxes[6].insertAdjacentHTML("afterend", "<h1>Este campo não pode ficar vazio.</h1>");
@@ -565,8 +600,8 @@ function validityQuestions(){
 					inputsBoxes[7].insertAdjacentHTML("afterend", "<h1>Coloque uma URL valida.</h1>");
 					valityValue = 0;
 				}
-			}if (inputsBoxes[8].value!==''||inputsBoxes[9].value!==''){
-				if (inputsBoxes[8].value===''){
+			} if (inputsBoxes[8].value !== '' || inputsBoxes[9].value !== '') {
+				if (inputsBoxes[8].value === '') {
 					internalBox[i].parentNode.classList.add('error');
 					inputsBoxes[8].classList.add('become-red-3');
 					openQuestion(internalBox[i].parentNode.querySelector('.external'));
@@ -582,9 +617,10 @@ function validityQuestions(){
 			}
 		}
 	}
-	for (ii=0; ii<internalBox.length;ii++){
-		if (!internalBox[ii].parentNode.classList.contains('error')){
-			closeQuestion(internalBox[ii].parentNode.querySelector('.external'));}
+	for (ii = 0; ii < internalBox.length; ii++) {
+		if (!internalBox[ii].parentNode.classList.contains('error')) {
+			closeQuestion(internalBox[ii].parentNode.querySelector('.external'));
+		}
 	}
 	if (valityValue === 1){
 		getQuestions();
@@ -595,7 +631,7 @@ function validityQuestions(){
 }
 
 
-function validityLevels(){
+function validityLevels() {
 	let valityValue = 1;
 	let thereA0Percent = 0;
 	const internalBox = create.querySelectorAll('.internal');
@@ -606,41 +642,41 @@ function validityLevels(){
 	let allH2 = create.querySelectorAll('h2');
 	let allH3 = create.querySelectorAll('h3');
 	inputsBoxes = create.querySelectorAll('input');
-	for (let i=0; i<allInputs.length;i++){
+	for (let i = 0; i < allInputs.length; i++) {
 		allInputs[i].classList.remove('become-red');
 		allInputs[i].classList.remove('become-red-2');
 		allInputs[i].classList.remove('become-red-3');
 	}
-	for (i=0; i<allH1.length;i++){
+	for (i = 0; i < allH1.length; i++) {
 		allH1[i].remove();
 	}
-	for (i=0; i<allText.length;i++){
+	for (i = 0; i < allText.length; i++) {
 		allText[i].classList.remove('become-red');
 	}
-	for (i=0; i<allH2.length;i++){
+	for (i = 0; i < allH2.length; i++) {
 		allH2[i].remove();
 	}
-	for (i=0; i<allH3.length;i++){
+	for (i = 0; i < allH3.length; i++) {
 		allH3[i].remove();
 	}
-	for (i=0; i<internalBox.length;i++){
+	for (i = 0; i < internalBox.length; i++) {
 		internalBox[i].parentNode.classList.remove('error');
 	}
-	for (i=0; i<internalBox.length;i++){
-		if(internalBox[i].querySelector("#number").value==0||internalBox[i].querySelector("#number").value===''){
+	for (i = 0; i < internalBox.length; i++) {
+		if (internalBox[i].querySelector("#number").value == 0 || internalBox[i].querySelector("#number").value === '') {
 			thereA0Percent = 1;
 		}
 	}
-	if(thereA0Percent === 0){
-		for (i=0; i<internalBox.length;i++){
-			internalBox[i].querySelector('input').insertAdjacentHTML('beforebegin',"<h3>Deve ter pelo menos um nível minimo 0.</h3>");
+	if (thereA0Percent === 0) {
+		for (i = 0; i < internalBox.length; i++) {
+			internalBox[i].querySelector('input').insertAdjacentHTML('beforebegin', "<h3>Deve ter pelo menos um nível minimo 0.</h3>");
 			internalBox[i].querySelector("#number").classList.add('become-red');
 			internalBox[i].parentNode.classList.add('error');
 			valityValue = 0;
 		}
 	}
 
-	for (i=0; i<internalBox.length;i++){
+	for (i = 0; i < internalBox.length; i++) {
 		isAllEmpty = 1;
 		inputsBoxes = internalBox[i].querySelectorAll('input');
 		if (inputsBoxes[0].value.length<10) {
@@ -649,7 +685,7 @@ function validityLevels(){
 			inputsBoxes[0].classList.add('become-red');
 			valityValue = 0;
 			inputsBoxes[0].insertAdjacentHTML("afterend", "<h1>O título do nível deve ter no mínimo 10 caracteres.</h1>");
-		} if ((inputsBoxes[1].value<0||inputsBoxes[1].value>100||inputsBoxes[1].value==='')&&thereA0Percent===1) {
+		} if ((inputsBoxes[1].value < 0 || inputsBoxes[1].value > 100 || inputsBoxes[1].value === '') && thereA0Percent === 1) {
 			internalBox[i].parentNode.classList.add('error');
 			openQuestion(internalBox[i].parentNode.querySelector('.external'));
 			inputsBoxes[1].classList.add('become-red');
@@ -669,9 +705,10 @@ function validityLevels(){
 			internalBox[i].querySelector('textarea').insertAdjacentHTML("afterend", "<h1>A descrição do nível deve ter no mínimo 30 caracteres.</h1>");
 		}
 	}
-	for (ii=0; ii<internalBox.length;ii++){
-		if (!internalBox[ii].parentNode.classList.contains('error')){
-			closeQuestion(internalBox[ii].parentNode.querySelector('.external'));}
+	for (ii = 0; ii < internalBox.length; ii++) {
+		if (!internalBox[ii].parentNode.classList.contains('error')) {
+			closeQuestion(internalBox[ii].parentNode.querySelector('.external'));
+		}
 	}
 	if (valityValue === 1){
 		getLevels();
@@ -686,4 +723,22 @@ function returnToHome(){
 	create.classList.add('hidden');
 	loading.classList.add('hidden');
 	pageToHome();
+}
+
+
+function deletar() {
+	let confirmar = confirm('Confirme para excluir o quizz');
+	//SELECIONAR A IMAGEM E ENVIAR O ID DO QUIZZ NA REQUISIÇÃO 
+	const imagem = document.querySelector('.quizz-box');
+	if (confirmar === true) {
+		//então envio a requisição
+		confirmar = axios.delete(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${ID_DO_QUIZZ}, {headers: {"Secret-Key": ${value}}`);
+		confirmar.then(mostrarResposta);
+    }
+}
+function mostrarResposta(response) {
+	if (response.status === 200) {
+		alert('Quizz excluído com sucesso');
+		//chamar lista de quizzes do usuário novamente;
+	}
 }
