@@ -321,10 +321,8 @@ function goToCreateLevel(){
 	toggleQuestion(ion.parentNode);
 	window.scrollTo(0,0);
 }
-let oi = [];
+
 function goToCreateEnd(element){
-	oi=element;
-	console.log(element.data);
 	loading.classList.add('hidden');
 	let listaSerializada = localStorage.getItem("lista");
 	const lista = JSON.parse(listaSerializada);
@@ -382,7 +380,7 @@ function getQuestions(){
 				})
 			}
 		}
-		arrayQuestions[0].answers = arrayAswers;
+		arrayQuestions[i].answers = arrayAswers;
 	}
 	arrayCreateQuizz[0].questions = arrayQuestions;
 }
