@@ -8,17 +8,36 @@ let toLoad;
 renderMainPage();
 
 // Functions ================================================================================
+
+
+function testQuizz(element){
+	const myQuizzesList = document.querySelector(".my-quizzes ul");
+	if (myQuizzesList.innerHTML=='')
+		myQuizzesList.replaceChildren(createQuizzBox(element.data));
+	else
+		myQuizzesList.appendChild(createQuizzBox(element.data));
+}
+
 function renderMainPage() {
 	// Render all-quizzes
 	const allQuizzesList = document.querySelector(".all-quizzes ul");
-	let fragment;
-
+	const myQuizzesList = document.querySelector(".my-quizzes ul");
+	myQuizzesList.innerHTML='';
+	let text;
 	startLoading(list);
+	const userList = JSON.parse(localStorage.getItem("userList"));
+	if (userList!=null){
+		document.querySelector(".empty-quizz").classList.add("hidden");
+		document.querySelector(".my-title").classList.remove("hidden");
+		for (let j = 0; j < userList.length; j++){
+			text = axios.get(url+'/'+userList[j].id);
+			text.then(testQuizz);
+		}
+	}
 	axios.get(url)
 		.then(promise => {
 			const allQuizzes = promise.data;
-			const userList = JSON.parse(localStorage.getItem("userList"));
-
+			/*const userList = JSON.parse(localStorage.getItem("userList"));
 			// Filtering user quizzes
 			if (userList) {
 				const myQuizzesList = document.querySelector(".my-quizzes ul");
@@ -28,9 +47,9 @@ function renderMainPage() {
 
 				for (let i = 0; i < allQuizzes.length; i++) {
 					let isFromUser = false;
-
+					console.log(userList[0]);
 					for (let j = 0; j < userList.length; j++) {
-						if (allQuizzes[i].id === userList[j]) {
+						if (allQuizzes[i].id === userList[j].id) {
 							userList.splice(j, 1);
 							isFromUser = true;
 							break;
@@ -48,7 +67,7 @@ function renderMainPage() {
 				fragment = document.createDocumentFragment();
 				myQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
 				myQuizzesList.replaceChildren(fragment);
-			}
+			}*/
 
 			// All Quizzes
 			fragment = document.createDocumentFragment();
@@ -720,7 +739,7 @@ function returnToHome(){
 	page.classList.add('hidden');
 	create.classList.add('hidden');
 	loading.classList.add('hidden');
-	pageToHome();
+	list.classList.remove('hidden');
 }
 
 
