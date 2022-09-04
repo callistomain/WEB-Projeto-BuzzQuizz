@@ -385,7 +385,24 @@ h1 {
   font-size: 19px;
   color: #BABABA;
 }
-.quizz-create button{
+
+.create-end{
+  width: 220px;
+  height: 44px;
+  border-radius: 15px;
+  border: 0px;
+  background-color: #EC362D;
+  color: white;
+  font-weight: 400;
+  cursor: pointer;
+  margin-top: 30px;
+  margin-left: 25px;
+  margin-right: 25px;
+  font-size: 18px;
+  margin-bottom: 30px;
+}
+
+.quizz-create .button{
   width: 370px;
   height: 54px;
   border-radius: 15px;
@@ -417,6 +434,14 @@ h1 {
   color: #EC362D;
   margin-top: 10px;
   margin-bottom: 0px;
+}
+
+.quizz-create h4{
+  font-weight: 400;
+  font-size: 18px;
+  color: #818181;
+  cursor: pointer;
+  margin-top: -10px;
 }
 
 .internal{
@@ -457,21 +482,65 @@ h1 {
 }
 
 
+
+
+.quizz-box-2 {
+  margin-top: 35px;
+  position: relative;
+  width: 340px;
+  height: 180px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.quizz-box-2 img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+}
+
+.quizz-box-2 .gradient {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: inherit;
+  background: linear-gradient(to top, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+}
+
+.quizz-box-2 span {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  padding: 20px;
+
+  font-size: 19px;
+  color: white;
+}
+
+
+
+
+
 @media (max-width: 600px) {
   .box-creation{
     width: 100%;
-    height: 2auto;
+    height: auto;
   }
   .internal{
     width: 100%;
-    height: 2auto;
+    height: auto;
   }
+}
+@media (max-width: 1099px) {
+  
   .title-creation{
     margin-top: 34px;
     font-weight: 700;
     font-size: 20px;
   }
-  .quizz-create button{
+  .quizz-create .button{
     margin-top: 30px;
     width: 324px;
     margin-left: 25px;
