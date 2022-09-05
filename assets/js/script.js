@@ -282,10 +282,10 @@ function goToCreateQuestion() {
 	for (let i = 0; i < newQuizzData[2]; i++) {
 		create.innerHTML += `
         <div class="box-creation">
-            <div class='question-creation'>
+            <div class='question-creation' data-identifier="question-form">
                 <div onclick='' class='external id${i}'>
                     <p>Pergunta ${i + 1}</p>
-                    <ion-icon onclick='toggleQuestion(this.parentNode)' class="" name="create-outline"></ion-icon>
+                    <ion-icon onclick='toggleQuestion(this.parentNode)' class="" name="create-outline" data-identifier="expand"></ion-icon>
             		<ion-icon onclick='toggleQuestion(this.parentNode)' class="hidden" name="remove-outline"></ion-icon>
                 </div>
                 <div class='internal hidden id${i}'>
@@ -321,10 +321,10 @@ function goToCreateLevel(){
             <div class='question-creation'>
                 <div onclick='' class='external id${i + 1}'>
                     <p>Nível ${i + 1}</p>
-                    <ion-icon onclick='toggleQuestion(this.parentNode)' class="" name="create-outline"></ion-icon>
+                    <ion-icon onclick='toggleQuestion(this.parentNode)' class="" name="create-outline" data-identifier="expand"></ion-icon>
             		<ion-icon onclick='toggleQuestion(this.parentNode)' class="hidden" name="remove-outline"></ion-icon>
                 </div>
-                <div class='internal hidden id${i + 1}'>
+                <div class='internal hidden id${i + 1}' data-identifier="level">
                     <input class='creation-space-1' type="text" id="text" placeholder="Título do nível">
 					<input class='creation-space-1' type="number" id="number" placeholder="% de acerto mínima" required>
 					<input class='creation-space-1' type="url" id="text" placeholder="URL da imagem do nível" required>
@@ -843,7 +843,7 @@ function validityLevels(edit) {
 	for (i = 0; i < internalBox.length; i++) {
 		isAllEmpty = 1;
 		inputsBoxes = internalBox[i].querySelectorAll('input');
-		if (inputsBoxes[0].value.length<10) {
+		if (inputsBoxes[0].value.length < 10) {
 			internalBox[i].parentNode.classList.add('error');
 			openQuestion(internalBox[i].parentNode.querySelector('.external'));
 			inputsBoxes[0].classList.add('become-red');
@@ -861,7 +861,7 @@ function validityLevels(edit) {
 			inputsBoxes[2].classList.add('become-red');
 			valityValue = 0;
 			inputsBoxes[2].insertAdjacentHTML("afterend", "<h1>O valor informado não é uma URL válida.</h1>");
-		} if (internalBox[i].querySelector('textarea').value < 30) {
+		} if (internalBox[i].querySelector('textarea').value.length < 30) {
 			openQuestion(internalBox[i].parentNode.querySelector('.external'));
 			internalBox[i].parentNode.classList.add('error');
 			internalBox[i].querySelector('textarea').classList.add('become-red');
