@@ -116,7 +116,7 @@ function createQuizzBox(obj, fromUser) {
 
 		const iconDelete = document.createElement("ion-icon");
 		iconDelete.setAttribute("name", "trash-outline");
-		iconEdit.addEventListener("click", () => quizzEdit(obj));
+		iconEdit.addEventListener("click", () => del()); // Aqui
 
 		iconsWrapper.appendChild(iconEdit);
 		iconsWrapper.appendChild(iconDelete);
@@ -923,5 +923,30 @@ function mostrarResposta(response) {
 	if (response.status === 200) {
 		alert('Quizz excluído com sucesso');
 		//chamar lista de quizzes do usuário novamente;
+	}
+}
+
+//---------------bonus button excluir-----------------------------------
+function del() {
+	console.log(element)
+	let confirmar = confirm('Confirme para excluir o quizz');
+
+	//SELECIONAR A IMAGEM E ENVIAR O ID DO QUIZZ NA REQUISIÇÃO 
+	let icon = document.querySelector('.my-quizzes');
+	icon = idQuizz;
+	console.log(icon)
+	
+	if (confirmar === true) {
+		//confirmar = axios.delete(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${icon}, {headers: {"Secret-Key": ${value}}`);
+		confirmar = axios.put('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/'+idQuizz, {headers: {"Secret-Key": objectPcEdit.secretKey},});
+		confirmar.then(mostrarResposta);
+    }
+	//confirmar.addEventListener("click", mostrarResposta)
+}
+
+function mostrarResposta(response) {
+	if (response.status === 200) {
+		alert('Quizz excluído com sucesso');
+		renderMainPage();
 	}
 }
