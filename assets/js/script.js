@@ -10,7 +10,6 @@ renderMainPage();
 // Functions ================================================================================
 function testQuizz(element){
 	const myQuizzesList = document.querySelector(".my-quizzes ul");
-	console.log()
 	if (myQuizzesList.innerHTML=='')
 		myQuizzesList.replaceChildren(createQuizzBox(element.data, true));
 	else
@@ -24,16 +23,21 @@ function renderMainPage() {
 	startLoading(list);
 
 	let text;
-	myQuizzesList.innerHTML='';
+	myQuizzesList.innerHTML = '';
+    document.querySelector(".empty-quizz").classList.remove("hidden");
+    document.querySelector(".my-title").classList.add("hidden");
+    document.querySelector(".my-quizzes").classList.add("hidden");
 	const userList = JSON.parse(localStorage.getItem("userList"));
-	if (userList != null){
-		document.querySelector(".empty-quizz").classList.add("hidden");
-		document.querySelector(".my-title").classList.remove("hidden");
-		document.querySelector(".my-quizzes").classList.remove("hidden");
-		for (let j = 0; j < userList.length; j++){
-			text = axios.get(url + '/' + userList[j].id);
-			text.then(testQuizz);
-		}
+	if (userList != null) {
+        if (userList.length) {
+            document.querySelector(".empty-quizz").classList.add("hidden");
+            document.querySelector(".my-title").classList.remove("hidden");
+            document.querySelector(".my-quizzes").classList.remove("hidden");
+            for (let j = 0; j < userList.length; j++){
+                text = axios.get(url + '/' + userList[j].id);
+                text.then(testQuizz);
+            }
+        }
 	}
 
 	// All Quizzes
@@ -116,7 +120,7 @@ function createQuizzBox(obj, fromUser) {
 
 		const iconDelete = document.createElement("ion-icon");
 		iconDelete.setAttribute("name", "trash-outline");
-		iconDelete.addEventListener("click", () => quizzDelet(obj)); // Aqui
+		iconDelete.addEventListener("click", () => quizzDelete(obj));
 
 		iconsWrapper.appendChild(iconEdit);
 		iconsWrapper.appendChild(iconDelete);
@@ -124,6 +128,7 @@ function createQuizzBox(obj, fromUser) {
 	}
 
 	grad.addEventListener("click", homeToPage);
+	title.addEventListener("click", homeToPage);
 	return quizzBox;
 }
 
@@ -377,9 +382,9 @@ function getEndToEdit(element){
 	create.innerHTML = `
         <p class="title-creation">Seu quizz foi editado!</p>
         <div class="quizz-box-2" id="${element.data.id}">
-            <img src=${lista[0].image}>
+            <img src=${element.data.image}>
             <div class="gradient"></div>
-            <span>${lista[0].title}</span>
+            <span>${element.data.title}</span>
         </div>
         <button class='create-end' id="${element.data.id}">Acessar Quizz</button>
         <h4 onclick="returnToHome()">Voltar pra home</h4>
@@ -452,6 +457,7 @@ function exportQuizz() {
 	response.then(goToCreateEnd);
     response.catch(endLoading);
 }
+
 function exportQuizz2() {
 	//objectPcEdit
 	arrayEditQuizz = [{
@@ -460,7 +466,6 @@ function exportQuizz2() {
 		questions: arrayCreateQuizz[0].questions,
 		levels: arrayCreateQuizz[0].levels
 	}];
-	console.log(arrayEditQuizz);
 	loading.classList.remove('hidden');
     startLoading(create);
 	let response = axios.put('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/'+objectPcEdit.id, arrayEditQuizz[0], {headers: {"Secret-Key": objectPcEdit.secretKey},});
@@ -536,7 +541,6 @@ function getQuizzToEdit(element) {
 	create.querySelector('p').innerHTML='Editar o começo';
 	create.querySelector('button').innerHTML='Prosseguir pra editar perguntas';
 	create.querySelector('button').onclick=goToEditQuestions;
-	console.log(create.querySelector('button').onclick)
 }
 
 function goToEditQuestions(){
@@ -889,27 +893,28 @@ function returnToHome() {
     window.scrollTo(0, 0);
 	renderMainPage();
 }
+
 //-------------------------botao excluir----------
+function quizzDelete(element) {
+    const confirmar = window.confirm('Confirme para excluir o quizz');
 
-let objectExcluir;
-function quizzDelet(element) {
-	let confirmar = confirm('Confirme para excluir o quizz');
-	const myQuizzList = JSON.parse(localStorage.getItem("userList"));
-	for (let i = 0; i < myQuizzList.length; i++){
-		if(element.id === myQuizzList[i].id && element.key === myQuizzList[i].key){
-			objectExcluir = myQuizzList[i];
-		}
-	}
-	if (confirmar === true) {
-	let icon = document.querySelector('.my-quizzes li');
-	icon = axios.delete(url + "/" + objectExcluir.id, {headers: {"Secret-Key": objectExcluir.key},});
-	icon.then(mostrarResposta);
-  }
-}
+    if (confirmar === true) {
+        let objectExcluir;
 
-function mostrarResposta(response) {
-	if (response.status === 200) {
-		alert('Quizz excluído com sucesso');
-		renderMainPage();
-	}
+        const myQuizzList = JSON.parse(localStorage.getItem("userList"));
+        for (let i = 0; i < myQuizzList.length; i++){
+            if (element.id === myQuizzList[i].id) {
+                objectExcluir = myQuizzList[i];
+                myQuizzList.splice(i, 1);
+                break;
+            }
+        }
+
+        localStorage.setItem("userList", JSON.stringify(myQuizzList));
+
+        const promessa = axios.delete(url + "/" + objectExcluir.id, {headers: {"Secret-Key": objectExcluir.secretKey}});
+        startLoading(list);
+        promessa.then(renderMainPage);
+        promessa.catch(endLoading);
+    }
 }
