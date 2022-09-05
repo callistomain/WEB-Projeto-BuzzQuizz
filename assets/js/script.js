@@ -145,7 +145,7 @@ function endLoading() {
 }
 
 // Comportamento das respostas ==============================================================
-const delay = 500; // 2000
+const delay = 2000;
 let acertos, selecionados, quizzAtual;
 
 function renderizarQuizz(quizz) {
