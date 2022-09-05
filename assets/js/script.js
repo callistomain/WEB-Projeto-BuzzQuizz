@@ -116,7 +116,7 @@ function createQuizzBox(obj, fromUser) {
 
 		const iconDelete = document.createElement("ion-icon");
 		iconDelete.setAttribute("name", "trash-outline");
-		iconEdit.addEventListener("click", () => del()); // Aqui
+		iconDelete.addEventListener("click", () => quizzDelet(obj)); // Aqui
 
 		iconsWrapper.appendChild(iconEdit);
 		iconsWrapper.appendChild(iconDelete);
@@ -889,42 +889,22 @@ function returnToHome() {
     window.scrollTo(0, 0);
 	renderMainPage();
 }
+//-------------------------botao excluir----------
 
-
-function deletar() {
+let objectExcluir;
+function quizzDelet(element) {
 	let confirmar = confirm('Confirme para excluir o quizz');
-	//SELECIONAR A IMAGEM E ENVIAR O ID DO QUIZZ NA REQUISIÇÃO 
-	const imagem = document.querySelector('.quizz-box');
-	if (confirmar === true) {
-		//então envio a requisição
-		confirmar = axios.delete(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${ID_DO_QUIZZ}, {headers: {"Secret-Key": ${value}}`);
-		confirmar.then(mostrarResposta);
-    }
-}
-
-function mostrarResposta(response) {
-	if (response.status === 200) {
-		alert('Quizz excluído com sucesso');
-		//chamar lista de quizzes do usuário novamente;
+	const myQuizzList = JSON.parse(localStorage.getItem("userList"));
+	for (let i = 0; i < myQuizzList.length; i++){
+		if(element.id === myQuizzList[i].id && element.key === myQuizzList[i].key){
+			objectExcluir = myQuizzList[i];
+		}
 	}
-}
-
-//---------------bonus button excluir-----------------------------------
-function del() {
-	console.log(element)
-	let confirmar = confirm('Confirme para excluir o quizz');
-
-	//SELECIONAR A IMAGEM E ENVIAR O ID DO QUIZZ NA REQUISIÇÃO 
-	let icon = document.querySelector('.my-quizzes');
-	icon = idQuizz;
-	console.log(icon)
-	
 	if (confirmar === true) {
-		//confirmar = axios.delete(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${icon}, {headers: {"Secret-Key": ${value}}`);
-		confirmar = axios.put('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/'+idQuizz, {headers: {"Secret-Key": objectPcEdit.secretKey},});
-		confirmar.then(mostrarResposta);
-    }
-	//confirmar.addEventListener("click", mostrarResposta)
+	let icon = document.querySelector('.my-quizzes li');
+	icon = axios.delete(url + "/" + objectExcluir.id, {headers: {"Secret-Key": objectExcluir.key},});
+	icon.then(mostrarResposta);
+  }
 }
 
 function mostrarResposta(response) {
