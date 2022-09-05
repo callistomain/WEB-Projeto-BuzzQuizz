@@ -133,6 +133,42 @@ h1 {
   cursor: pointer;
 }
 
+.my-quizzes .quizz-box {
+  /* position: relative; */
+  width: 340px;
+  height: 180px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+/*ICONES DE EDITAR E EXCLUIR*/
+.icon-div {
+  position:absolute;
+  z-index:1;
+ /* margin-left:83.4%;
+ margin-bottom:100%; */
+  background-color: #EC362D;
+  width: 55px;
+  height: 110px;
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.icon-edit {
+  width: 25px;
+  height: 30px;
+  color: #FFFFFF;
+}
+
+.icon-trash{
+  width: 35px;
+  height: 32px;
+  color: #FFFFFF;
+}
+
 .quizz-box img {
   width: 100%;
   height: 100%;
@@ -515,40 +551,10 @@ h1 {
   margin-top: 15px;
   background-color: #FFE9E9;
 }
-
+/*
 .image {
-
   position: relative;
-}
-
-/*ICONES DE EDITAR E EXCLUIR*/
-.icon-div {
-  position: absolute;
-  background-color: #EC362D;
-  width: 43px;
-  height: 87px;
-  position: absolute;
-  /*em relação à imagem do quizz do usário*/
-  border-radius: 20px;
-  top: 2%;
-  right: 2%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-evenly;
-}
-
-.icon-trash-edit {
-  width: 28px;
-  height: 25px;
-  color: #FFFFFF;
-}
-
-.icon-edit {
-  width: 22px;
-  height: 25px;
-  color: #FFFFFF;
-}
+}*/
 
 .quizz-box-2 {
   margin-top: 35px;

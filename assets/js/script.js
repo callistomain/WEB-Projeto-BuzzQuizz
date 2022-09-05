@@ -97,7 +97,7 @@ function homeToPage(e) {
 
 // Page 2 > Page 1
 function pageToHome() {
-    page.classList.add("hidden");
+    page.classLcreateQuizzBoxist.add("hidden");
     list.classList.remove("hidden");
     window.scrollTo(0, 0);
     renderMainPage();
@@ -122,6 +122,8 @@ function homeToCreate() {
 
 // DOM ======================================================================================
 function createQuizzBox(obj) {
+	buttonsMyQuizz(obj);
+
 	const quizzBox = document.createElement("li");
 	quizzBox.className = "quizz-box";
 	quizzBox.id = obj.id;
@@ -132,6 +134,7 @@ function createQuizzBox(obj) {
 	const grad = document.createElement("div");
 	grad.className = "gradient";
 
+	
 	const title = document.createElement("span");
 	title.textContent = obj.title;
 
@@ -140,6 +143,7 @@ function createQuizzBox(obj) {
 	quizzBox.appendChild(title);
 
 	quizzBox.addEventListener("click", homeToPage);
+
 	return quizzBox;
 }
 
@@ -919,21 +923,51 @@ function returnToHome() {
 	renderMainPage();
 }
 
+//---------------bonus button excluir-----------------------------------
+let idQuizz;
+function buttonsMyQuizz(obj){
+	let quizzesBox;
+	idQuizz = obj.id
 
-function deletar() {
+	const myQuizzBox = document.createElement("div");
+	myQuizzBox.className = "icon-div";
+	myQuizzBox.id = obj.id;
+
+	const iconEdit = document.createElement("img");
+	 iconEdit.src ="assets/img/editar.png";
+	 iconEdit.className = "icon-edit";
+
+	const iconExcluir = document.createElement("img");
+	iconExcluir.src ="assets/img/excluir.png";
+	iconExcluir.className = "icon-trash";
+
+	myQuizzBox.appendChild(iconEdit);
+	myQuizzBox.appendChild(iconExcluir);
+
+	quizzesBox = document.querySelector('.my-quizzes ul').appendChild(myQuizzBox);
+
+	iconExcluir.addEventListener("click", del);
+}
+
+function del() {
+	console.log(element)
 	let confirmar = confirm('Confirme para excluir o quizz');
 	//SELECIONAR A IMAGEM E ENVIAR O ID DO QUIZZ NA REQUISIÇÃO 
-	const imagem = document.querySelector('.quizz-box');
+	let icon = document.querySelector('.my-quizzes');
+	icon = idQuizz;
+console.log(icon)
 	if (confirmar === true) {
-		//então envio a requisição
-		confirmar = axios.delete(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${ID_DO_QUIZZ}, {headers: {"Secret-Key": ${value}}`);
+		//confirmar = axios.delete(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${icon}, {headers: {"Secret-Key": ${value}}`);
+		confirmar = axios.put('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/'+idQuizz, {headers: {"Secret-Key": objectPcEdit.secretKey},});
 		confirmar.then(mostrarResposta);
     }
+	//confirmar.addEventListener("click", mostrarResposta)
 }
 
 function mostrarResposta(response) {
 	if (response.status === 200) {
 		alert('Quizz excluído com sucesso');
-		//chamar lista de quizzes do usuário novamente;
+		renderMainPage();
 	}
 }
+
