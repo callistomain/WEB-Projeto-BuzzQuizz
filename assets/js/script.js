@@ -374,23 +374,6 @@ function goToCreateEnd(element){
 
 function getEndToEdit(element){
 	loading.classList.add('hidden');
-	let listaSerializada = localStorage.getItem("lista");
-	const lista = JSON.parse(listaSerializada);
-    
-	let lista2 = JSON.parse(localStorage.getItem("userList"));
-	if (lista2) {
-		lista2.push({
-            id: element.data.id,
-			secretKey: element.data.key
-		});
-	} else {
-		lista2 = [{
-            id: element.data.id,
-			secretKey: element.data.key
-		}];
-	}
-	localStorage.setItem("userList", JSON.stringify(lista2));
-
 	create.innerHTML = `
         <p class="title-creation">Seu quizz foi editado!</p>
         <div class="quizz-box-2" id="${element.data.id}">
