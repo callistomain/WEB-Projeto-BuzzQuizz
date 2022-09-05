@@ -12,67 +12,34 @@ function testQuizz(element){
 	const myQuizzesList = document.querySelector(".my-quizzes ul");
 	console.log()
 	if (myQuizzesList.innerHTML=='')
-		myQuizzesList.replaceChildren(createQuizzBox(element.data));
+		myQuizzesList.replaceChildren(createQuizzBox(element.data, true));
 	else
-		myQuizzesList.appendChild(createQuizzBox(element.data));
+		myQuizzesList.appendChild(createQuizzBox(element.data, true));
 }
 
 function renderMainPage() {
 	// Render all-quizzes
 	const allQuizzesList = document.querySelector(".all-quizzes ul");
 	const myQuizzesList = document.querySelector(".my-quizzes ul");
-	myQuizzesList.innerHTML='';
-	let text;
 	startLoading(list);
+
+	let text;
+	myQuizzesList.innerHTML='';
 	const userList = JSON.parse(localStorage.getItem("userList"));
-	if (userList!=null){
+	if (userList != null){
 		document.querySelector(".empty-quizz").classList.add("hidden");
 		document.querySelector(".my-title").classList.remove("hidden");
 		document.querySelector(".my-quizzes").classList.remove("hidden");
 		for (let j = 0; j < userList.length; j++){
-			text = axios.get(url+'/'+userList[j].id);
+			text = axios.get(url + '/' + userList[j].id);
 			text.then(testQuizz);
 		}
 	}
+
+	// All Quizzes
 	axios.get(url)
     .then(promise => {
         const allQuizzes = promise.data;
-        const userList = JSON.parse(localStorage.getItem("userList"));
-
-        // Filtering user quizzes
-        /*if (userList) {
-            const myQuizzes = [];
-            for (let i = 0; i < allQuizzes.length; i++) {
-                let isFromUser = false;
-                for (let j = 0; j < userList.length; j++) {
-                    if (allQuizzes[i].id === userList[j].id) {
-                        userList.splice(j, 1);
-                        isFromUser = true;
-                        break;
-                    }
-                }
-                
-                if (isFromUser) {
-                    myQuizzes.push(allQuizzes[i]);
-                    allQuizzes.splice(i, 1);
-                    i--;
-                }
-            }
-            
-            // My Quizzes
-            if (myQuizzes.length) {
-                const myQuizzesList = document.querySelector(".my-quizzes ul");
-                document.querySelector(".empty-quizz").classList.add("hidden");
-                document.querySelector(".my-quizzes").classList.remove("hidden");
-                document.querySelector(".my-title").classList.remove("hidden");
-
-                fragment = document.createDocumentFragment();
-                myQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
-                myQuizzesList.replaceChildren(fragment);
-            }
-        }*/
-
-        // All Quizzes
         fragment = document.createDocumentFragment();
         allQuizzes.forEach(e => fragment.appendChild(createQuizzBox(e)));
         allQuizzesList.replaceChildren(fragment);
@@ -88,7 +55,7 @@ function homeToPage(e) {
 	window.scrollTo(0, 0);
     
 	startLoading(page);
-	axios.get(url + "/" + e.currentTarget.id)
+	axios.get(url + "/" + e.currentTarget.parentNode.id)
     .then(promise => {
         renderizarQuizz(promise.data);
         endLoading();
@@ -121,7 +88,7 @@ function homeToCreate() {
 }
 
 // DOM ======================================================================================
-function createQuizzBox(obj) {
+function createQuizzBox(obj, fromUser) {
 	const quizzBox = document.createElement("li");
 	quizzBox.className = "quizz-box";
 	quizzBox.id = obj.id;
@@ -139,7 +106,24 @@ function createQuizzBox(obj) {
 	quizzBox.appendChild(grad);
 	quizzBox.appendChild(title);
 
-	quizzBox.addEventListener("click", homeToPage);
+	if (fromUser) {
+		const iconsWrapper = document.createElement("div");
+		iconsWrapper.className = "icons-wrapper";
+
+		const iconEdit = document.createElement("ion-icon");
+		iconEdit.setAttribute("name", "create-outline");
+		iconEdit.addEventListener("click", () => quizzEdit(obj));
+
+		const iconDelete = document.createElement("ion-icon");
+		iconDelete.setAttribute("name", "trash-outline");
+		iconEdit.addEventListener("click", () => quizzEdit(obj));
+
+		iconsWrapper.appendChild(iconEdit);
+		iconsWrapper.appendChild(iconDelete);
+		quizzBox.appendChild(iconsWrapper);
+	}
+
+	grad.addEventListener("click", homeToPage);
 	return quizzBox;
 }
 
@@ -541,7 +525,7 @@ function createToPage(e) {
 }
 // Quizz Edit ===================================================================================
 let objectPcEdit;
-function quizzEdit(element){
+function quizzEdit(element) {
 	let response = axios.get(url+'/'+element.id);
 	const userList = JSON.parse(localStorage.getItem("userList"));
 	for (i=0;i<userList.length;i++){
@@ -550,8 +534,9 @@ function quizzEdit(element){
 	}
 	response.then(getQuizzToEdit);
 }
+
 let arrayEditQuizz;
-function getQuizzToEdit(element){
+function getQuizzToEdit(element) {
 	let object = [{
 		title: element.data.title,
 		image: element.data.image,
@@ -570,16 +555,19 @@ function getQuizzToEdit(element){
 	create.querySelector('button').onclick=goToEditQuestions;
 	console.log(create.querySelector('button').onclick)
 }
+
 function goToEditQuestions(){
 	const vality = validarInfosQuizz();
 	if (vality==1)
 		getQuestionsToEdit();
 }
+
 function goToEditLevels(){
 	const vality = validityQuestions();
 	if (vality==1)
 		getLevelsToEdit();
 }
+
 function goToEditEnd(){
 	const vality = validityLevels('ok');
 	if (vality==1){
