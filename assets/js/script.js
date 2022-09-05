@@ -129,6 +129,7 @@ function createQuizzBox(obj, fromUser) {
 
 	grad.addEventListener("click", homeToPage);
 	title.addEventListener("click", homeToPage);
+    quizzBox.setAttribute("data-identifier", "quizz-card");
 	return quizzBox;
 }
 
@@ -177,7 +178,7 @@ function gerarCardPergunta(pergunta) {
     pergunta.answers.sort(() => Math.random() - 0.5);
 	pergunta.answers.forEach(function (resposta) {
 		respostas += `
-            <div class="answer ${resposta.isCorrectAnswer}" onclick="escolherResposta(this)">
+            <div class="answer ${resposta.isCorrectAnswer}" onclick="escolherResposta(this)" data-identifier="answer">
                 <img src="${resposta.image}" alt="">
                 <div>${resposta.text}</div>
             </div>
@@ -185,7 +186,7 @@ function gerarCardPergunta(pergunta) {
 	});
 
 	return `
-        <li class="question-box">
+        <li class="question-box" data-identifier="question">
             <div class="title-wrapper" style="background-color:${pergunta.color}">
                 <h2>${pergunta.title}</h2>
             </div>
@@ -237,7 +238,7 @@ function resolveResult() {
 		const level = levels[i];
 		setTimeout(() => {
 			page.innerHTML += `
-            <div class="result-wrapper">
+            <div class="result-wrapper" data-identifier="quizz-result">
                 <div class="result">
                     <div class="title-wrapper" style="background-color:#EC362D">
                         <h2>${percentage}% de acerto: ${level.title}</h2>
